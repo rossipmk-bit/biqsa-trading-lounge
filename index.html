@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BIQSA Trading Command & Lounge — XAUUSD (Cara Fity V2)</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --bg-panel: #0f172a;
+      --bg-card: #162038;
+      --border: #233252;
+      --gold: #f59e0b;
+      --gold-soft: rgba(245, 158, 11, 0.14);
+      --emerald: #10b981;
+      --sky: #38bdf8;
+      --purple: #c084fc;
+      --danger: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #0b1324 0%, #131f3a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #070b14;
+      font-weight: 800;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    .brand-title h1 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .brand-title p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .session-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding-bottom: 2px;
+    }
+    .session-pill {
+      padding: 6px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .session-pill.active {
+      border-color: var(--gold);
+      background: var(--gold-soft);
+      color: #fde68a;
+      font-weight: 600;
+    }
+    .status-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      flex-wrap: wrap;
+    }
+    .badge-online {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #34d399;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    /* Mobile view switcher */
+    .mobile-nav {
+      display: none;
+      background: #0b1324;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+      gap: 8px;
+    }
+    .mobile-nav button {
+      flex: 1;
+      padding: 9px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 12.5px;
+      cursor: pointer;
+    }
+    .mobile-nav button.active {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: var(--gold);
+      color: #fde68a;
+    }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      min-height: calc(100vh - 68px);
+    }
+    .left-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      border-right: 1px solid var(--border);
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .kpi-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .kpi-card .label {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .kpi-card .val {
+      font-size: 16.5px;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+    .kpi-card .sub {
+      font-size: 10.5px;
+      color: var(--emerald);
+      margin-top: 2px;
+    }
+    .chart-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .chart-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .chart-header h2 {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fde68a;
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    canvas#xauChart {
+      width: 100%;
+      height: 230px;
+      background: #09101f;
+      border-radius: 8px;
+      border: 1px solid #1b2845;
+    }
+    .gates-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .gates-panel h3 {
+      font-size: 12.5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .gates-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .gate-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 11px;
+    }
+    .gate-item strong {
+      color: #34d399;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      background: #0b111e;
+      max-height: calc(100vh - 68px);
+    }
+    .lounge-header {
+      padding: 12px 14px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .channel-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+    .channel-tab {
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .channel-tab.active {
+      background: rgba(56, 189, 248, 0.14);
+      border-color: var(--sky);
+      color: #e0f2fe;
+    }
+    .chat-stream {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 320px;
+    }
+    .msg-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+    }
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .msg-user { font-weight: 700; font-size: 12.5px; }
+    .msg-role {
+      font-size: 9.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.07);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .msg-time {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+    .msg-text {
+      font-size: 12.5px;
+      line-height: 1.48;
+      color: #e2e8f0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .msg-reactions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+    }
+    .react-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .chat-composer {
+      padding: 10px 12px;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .chat-composer select {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 11.5px;
+    }
+    .chat-composer input {
+      flex: 1;
+      background: #070b14;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 12.5px;
+      min-width: 0;
+    }
+    .btn {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #070b14;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      font-size: 11px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .mobile-nav { display: flex; }
+      main {
+        display: block;
+        min-height: auto;
+      }
+      .left-col { border-right: none; }
+      .right-col { max-height: none; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .gates-grid { grid-template-columns: 1fr; }
+      .mobile-hidden { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-badge">XAUUSD</div>
+      <div class="brand-title">
+        <h1>BIQSA TRADING & LOUNGE</h1>
+        <p>Cara Fity V2 • 3 Sesi • Zero Paid API Slack</p>
+      </div>
+    </div>
+    <div class="session-pills">
+      <div class="session-pill" onclick="switchSession('ASIA', this)">🌏 Sesi 1: ASIA</div>
+      <div class="session-pill active" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA</div>
+      <div class="session-pill" onclick="switchSession('US', this)">🗽 Sesi 3: US</div>
+    </div>
+    <div class="status-strip">
+      <button class="btn-secondary" onclick="triggerSimEvent('TP1_2R')">⚡ Simulasi +2R (TP1)</button>
+      <span class="badge-online">🟢 8-Gate Fity: ACTIVE</span>
+    </div>
+  </header>
+
+  <div class="mobile-nav">
+    <button id="tabLoungeBtn" class="active" onclick="switchMobilePane('lounge')">💬 Lounge Nongkrong & AI</button>
+    <button id="tabRadarBtn" onclick="switchMobilePane('radar')">📈 Radar XAUUSD & 8-Gate</button>
+  </div>
+
+  <main>
+    <section class="left-col mobile-hidden" id="paneRadar">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="label">Harga XAUUSD</div>
+          <div class="val" id="livePrice" style="color: var(--gold);">$2,753.40</div>
+          <div class="sub">Spread: 22 pts (&le; 35)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Posisi Aktif MT5</div>
+          <div class="val">BUY 0.11 Lot</div>
+          <div class="sub">SL BEP+ ($2,748.85) • 0% Risk</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Profit Kantong (+1R)</div>
+          <div class="val" style="color: var(--emerald);">+$49.50</div>
+          <div class="sub">Floating Sisa: +$53.90</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">Kuota Sesi Eropa</div>
+          <div class="val">1 / 1 Peluru</div>
+          <div class="sub">Cooldown SL: CLEAR</div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <div class="chart-header">
+          <h2>📈 Live Radar XAUUSD (M15) — Asian Range, Entry, BEP+, & Target TP</h2>
+          <div class="chart-legend">
+            <span>🟨 Asian High/Low</span>
+            <span>🟦 Entry ($2748.50)</span>
+            <span>🟩 BEP+ ($2748.85) & TP2 ($2762.00)</span>
+            <span>🟥 Hard SL ($2744.00)</span>
+          </div>
+        </div>
+        <canvas id="xauChart" width="720" height="230"></canvas>
+      </div>
+
+      <div class="gates-panel">
+        <h3>
+          <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity</span>
+          <span style="color: var(--emerald); font-size: 11.5px;">8 / 8 LULUS (GRADE A+)</span>
+        </h3>
+        <div class="gates-grid" id="gatesGrid"></div>
+      </div>
+    </section>
+
+    <section class="right-col" id="paneLounge">
+      <div class="lounge-header">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="font-size:13px;">💬 BIQSA Community & AI Lounge (Slack Mirror)</strong>
+          <span style="font-size:10.5px; color:var(--text-muted);">🟢 6 Online (Pak H, Fity, Firda, Dex, Syra)</span>
+        </div>
+        <div class="channel-tabs">
+          <div class="channel-tab active" onclick="selectChannel('xauusd-war-room', this)">#📈-xauusd-war-room</div>
+          <div class="channel-tab" onclick="selectChannel('nongkrong-santai', this)">#☕-nongkrong-santai</div>
+          <div class="channel-tab" onclick="selectChannel('jurnal-bep-audit', this)">#🛡️-jurnal-bep-audit</div>
+        </div>
+      </div>
+
+      <div class="chat-stream" id="chatStream"></div>
+
+      <div class="chat-composer">
+        <select id="senderSelect">
+          <option value="Pak H (Founder)">👑 Pak H</option>
+          <option value="Sobat Trader BIQSA">☕ Sobat</option>
+          <option value="Tamu VIP Lounge">🚀 Tamu</option>
+        </select>
+        <input id="chatInput" type="text" placeholder="Ketik obrolan santai atau panggil @Fity..." onkeydown="if(event.key==='Enter') sendChat()" />
+        <button class="btn" onclick="sendChat()">Kirim</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const FALLBACK_GATES = [
+      { gate_id: "GATE_1_DAILY_DRAWDOWN", detail: "Daily DD 0.00% (batas < 2.0%), Loss beruntun: 0/3" },
+      { gate_id: "GATE_2_SESSION_QUOTA_AND_COOLDOWN", detail: "Sesi EUROPE | Trade sesi ini: 0/1 | Cooldown SL: CLEAR" },
+      { gate_id: "GATE_3_NEWS_AND_SPREAD_SHIELD", detail: "Spread 22 pts (<= 35 pts) | News Shield USD: CLEAR" },
+      { gate_id: "GATE_4_SINGLE_RISK_EXPOSURE", detail: "Posisi terbuka belum BEP+: 0 (wajib 0)" },
+      { gate_id: "GATE_5_PRICE_DRIFT_GUARD", detail: "Drift harga saat diskusi Slack selesai: $0.25 (<= $1.00)" },
+      { gate_id: "GATE_6_SL_GEOMETRY_BOUNDS", detail: "Jarak SL $4.50 (45 pips) [batas $3.0-$12.0]" },
+      { gate_id: "GATE_7_SESSION_MIN_RR", detail: "R:R ke TP2 = 1:3.00 (wajib >= 1:2.00 Sesi EUROPE)" },
+      { gate_id: "GATE_8_CONSENSUS_AND_DEVILS_ADVOCATE", detail: "Kuorum 3/3 (100%), Devil's Advocate Veto: TIDAK ADA" }
+    ];
+
+    const FALLBACK_CHANNELS = {
+      "xauusd-war-room": [
+        {
+          user: "MT5 Sensor (VPS)", role: "MARKET FEED", avatar: "📡", color: "#38bdf8", time: "14:00:05 WIB",
+          text: "📊 [SESI 2 — EROPA (LONDON OPEN)] XAUUSD Bid $2748.50 / Ask $2748.72 (Spread 22 pts). Harga baru saja menyapu Asian Low ($2745.70) dan membentuk M15 Bullish Engulfing di atas H1 Order Block. Memanggil @Firda & @Dex (Strategist) serta @Syra (Devil's Advocate)!",
+          reactions: { "👀": 4, "🔥": 3 }
+        },
+        {
+          user: "Firda (Claude Cloud)", role: "STRATEGIST", avatar: "🟣", color: "#c084fc", time: "14:00:12 WIB",
+          text: "ROLE: STRATEGIST | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.92\nStruktur H4 & H1 solid Bullish HH_HL. Sapuan likuiditas di bawah Asian Low $2745.70 adalah Judas Swing klasik pembukaan Eropa. Rekomendasi BUY dengan SL di bawah ekor sapuan ($2744.00). Silakan uji risiko @Syra & @Fity!",
+          reactions: { "🎯": 3, "👍": 4 }
+        },
+        {
+          user: "Dex (Codex Quant)", role: "QUANT STRATEGIST", avatar: "🔵", color: "#60a5fa", time: "14:00:16 WIB",
+          text: "ROLE: STRATEGIST | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.91\nKalkulasi Kuantitatif: ATR(14) M15 saat ini $3.45. Jarak SL $4.50 (45 pips) = 1.30x ATR (aman dari noise M5). Rasio R:R ke TP2 ($2762.00) adalah 1:3.00.",
+          reactions: { "⚡": 3 }
+        },
+        {
+          user: "Syra (ChatGPT)", role: "DEVIL'S ADVOCATE", avatar: "🟠", color: "#fb923c", time: "14:00:21 WIB",
+          text: "ROLE: DEVILS_ADVOCATE | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.90\nAudit Kritis (Devil's Advocate): Tidak ada rilis berita High-Impact USD dalam 2 jam ke depan, dan spread stabil di 22 pts. Tidak ada Veto. Silakan ketok palu eksekusi @Fity!",
+          reactions: { "🛡️": 5 }
+        },
+        {
+          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "14:00:24 WIB",
+          text: "✅🚀 [KEPUTUSAN FITY — DISETUJUI & DIEKSEKUSI (EUROPE | GRADE_A_PLUS)]\nLolos 8/8 Gerbang Risiko! Drift harga hanya $0.25 (<= $1.00).\n• Order MT5: #26582580 — BUY 0.22 Lot XAUUSD @ $2748.50\n• Hard SL: $2744.00 (Risiko 1.0% = $99.00) | TP1: $2757.50 | TP2: $2762.00\n• Refleks VPS Aktif: Otomatis Partial Close 50% + geser SL ke BEP+ ($2748.85) saat menyentuh $2753.00 (+1.0R)!",
+          reactions: { "🚀": 6, "🔥": 5, "✅": 4 }
+        }
+      ],
+      "nongkrong-santai": [
+        {
+          user: "Fity (Host Lounge)", role: "AI HOST", avatar: "🟢", color: "#34d399", time: "14:01:00 WIB",
+          text: "Selamat datang di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Di sini teman-teman bisa nongkrong santai lewat HP maupun laptop, ngopi sambil pantau posisi XAUUSD, dan ngobrol bareng!",
+          reactions: { "☕": 5, "🔥": 4 }
+        },
+        {
+          user: "Firda (Claude Cloud)", role: "STRATEGIST", avatar: "🟣", color: "#c084fc", time: "14:02:10 WIB",
+          text: "Sesi Eropa sore ini rapi banget setelah sapuan Asian Low tadi. Begitu harga sentuh $2753.00 (+1R), posisi langsung otomatis bebas risiko (BEP+). Santai dulu sambil ngopi semuanya! ☕📈",
+          reactions: { "🙌": 3, "☕": 3 }
+        }
+      ],
+      "jurnal-bep-audit": [
+        {
+          user: "VPS Reflex Watchdog", role: "INSTANT GUARD (<10ms)", avatar: "🛡️", color: "#38bdf8", time: "14:00:24 WIB",
+          text: "🔒 [ORDER EXECUTED] Ticket #26582580 BUY 0.22 lot XAUUSD @ $2748.50 | Hard SL $2744.00 & TP $2762.00 terpasang di server MT5.",
+          reactions: { "✅": 3 }
+        },
+        {
+          user: "VPS Reflex Watchdog", role: "INSTANT GUARD (<10ms)", avatar: "🛡️", color: "#34d399", time: "14:38:15 WIB",
+          text: "⚡ [CHECKPOINT +1.0R TERCAPAI — AUTO BEP+] Harga menyentuh $2753.00. Otomatis Partial Close 0.11 lot (+$49.50 masuk saldo) & menggeser SL sisa 0.11 lot ke BEP+ ($2748.85). Risiko transaksi kini 0%!",
+          reactions: { "🔥": 5, "💰": 4 }
+        }
+      ]
+    };
+
+    let currentChannel = 'xauusd-war-room';
+    let allChannels = JSON.parse(JSON.stringify(FALLBACK_CHANNELS));
+
+    function switchMobilePane(pane) {
+      const radar = document.getElementById('paneRadar');
+      const lounge = document.getElementById('paneLounge');
+      const bRadar = document.getElementById('tabRadarBtn');
+      const bLounge = document.getElementById('tabLoungeBtn');
+      if (pane === 'radar') {
+        radar.classList.remove('mobile-hidden');
+        lounge.classList.add('mobile-hidden');
+        bRadar.classList.add('active');
+        bLounge.classList.remove('active');
+        setTimeout(drawXauChart, 60);
+      } else {
+        lounge.classList.remove('mobile-hidden');
+        radar.classList.add('mobile-hidden');
+        bLounge.classList.add('active');
+        bRadar.classList.remove('active');
+      }
+    }
+
+    async function loadState() {
+      renderGates(FALLBACK_GATES);
+      renderMessages();
+      drawXauChart();
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ok) {
+            allChannels = data.channels;
+            renderGates(data.cycle.decision.gates);
+            renderMessages();
+          }
+        }
+      } catch (e) {}
+    }
+
+    function renderGates(gates) {
+      const grid = document.getElementById('gatesGrid');
+      grid.innerHTML = gates.map(g => `
+        <div class="gate-item">
+          <strong>✅ ${g.gate_id}</strong>
+          <span>${g.detail}</span>
+        </div>
+      `).join('');
+    }
+
+    function selectChannel(ch, el) {
+      currentChannel = ch;
+      document.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const stream = document.getElementById('chatStream');
+      const list = allChannels[currentChannel] || [];
+      stream.innerHTML = list.map(m => {
+        const reacts = Object.entries(m.reactions || {}).map(([k, v]) => `<span class="react-pill">${k} ${v}</span>`).join('');
+        return `
+          <div class="msg-card">
+            <div class="msg-avatar">${m.avatar || '💬'}</div>
+            <div class="msg-body">
+              <div class="msg-meta">
+                <span class="msg-user" style="color:${m.color || '#fff'}">${m.user}</span>
+                <span class="msg-role">${m.role}</span>
+                <span class="msg-time">${m.time}</span>
+              </div>
+              <div class="msg-text">${m.text}</div>
+              <div class="msg-reactions">${reacts}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function nowWib() {
+      const d = new Date();
+      return d.toTimeString().split(' ')[0] + ' WIB';
+    }
+
+    async function sendChat() {
+      const input = document.getElementById('chatInput');
+      const user = document.getElementById('senderSelect').value;
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channel: currentChannel, user, text })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ok) {
+            allChannels = data.channels;
+            renderMessages();
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Client-side instant fallback when viewed on static public URL
+      allChannels[currentChannel].push({
+        user,
+        role: "HUMAN MEMBER",
+        avatar: user.includes("Pak H") ? "👑" : "☕",
+        color: user.includes("Pak H") ? "#facc15" : "#e2e8f0",
+        time: nowWib(),
+        text,
+        reactions: { "🔥": 1 }
+      });
+      allChannels[currentChannel].push({
+        user: "Fity (Antigravity)",
+        role: "KOORDINATOR & HOST",
+        avatar: "🟢",
+        color: "#34d399",
+        time: nowWib(),
+        text: `Siap ${user}! 🙌 Posisi XAUUSD kita di Sesi Eropa (BUY 0.22 Lot @ $2748.50) saat ini aman dengan SL sudah terkunci di BEP+ ($2748.85) setelah menyentuh +1R. Sisa 0.11 lot sedang mengawal tren menuju TP2 ($2762.00)! ☕🚀`,
+        reactions: { "🚀": 2, "☕": 2 }
+      });
+      renderMessages();
+    }
+
+    async function triggerSimEvent(eventType) {
+      try {
+        const res = await fetch('/api/simulate-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event_type: eventType })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ok) {
+            allChannels = data.channels;
+            selectChannel('jurnal-bep-audit', document.querySelectorAll('.channel-tab')[2]);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      allChannels['jurnal-bep-audit'].push({
+        user: "VPS Reflex Watchdog",
+        role: "INSTANT GUARD (<10ms)",
+        avatar: "🛡️",
+        color: "#60a5fa",
+        time: nowWib(),
+        text: "🎯 [CHECKPOINT +2.0R / TP1 TERCAPAI ($2757.50)] Trailing Stop otomatis dikunci naik ke +1.0R ($2753.00). Sisa 0.11 lot mengejar TP2 ($2762.00)!",
+        reactions: { "🎯": 4, "🔥": 4 }
+      });
+      selectChannel('jurnal-bep-audit', document.querySelectorAll('.channel-tab')[2]);
+    }
+
+    async function switchSession(sess, el) {
+      document.querySelectorAll('.session-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      allChannels['xauusd-war-room'].push({
+        user: "Fity (Antigravity)",
+        role: "KOORDINATOR & 8-GATE SHIELD",
+        avatar: "🟢",
+        color: "#34d399",
+        time: nowWib(),
+        text: `🔔 [BRIEFING SESI ${sess}] Kompas H4/H1 & Peta Asian Range ($2745.70 - $2753.10) tersinkronisasi. Kuota sesi: Maksimal 1 Peluru Terbaik (${sess === 'ASIA' ? 'Mean Reversion' : 'Liquidity Sweep & Trend Continuation'}).`,
+        reactions: { "⚡": 3 }
+      });
+      selectChannel('xauusd-war-room', document.querySelectorAll('.channel-tab')[0]);
+    }
+
+    function drawXauChart() {
+      const canvas = document.getElementById('xauChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      const minP = 2742.0, maxP = 2764.0;
+      const yOf = p => H - ((p - minP) / (maxP - minP)) * (H - 30) - 15;
+
+      const yAsiaHigh = yOf(2753.10), yAsiaLow = yOf(2745.70);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.08)';
+      ctx.fillRect(25, yAsiaHigh, W * 0.44, yAsiaLow - yAsiaHigh);
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
+      ctx.setLineDash([4, 4]);
+      ctx.strokeRect(25, yAsiaHigh, W * 0.44, yAsiaLow - yAsiaHigh);
+
+      const drawLevel = (price, color, label) => {
+        const y = yOf(price);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(25, y);
+        ctx.lineTo(W - 12, y);
+        ctx.stroke();
+        ctx.fillStyle = color;
+        ctx.font = '11px Segoe UI';
+        ctx.fillText(`${label}: $${price.toFixed(2)}`, W - 180, y - 4);
+      };
+
+      drawLevel(2762.00, '#10b981', 'TP2 (+3.0R)');
+      drawLevel(2757.50, '#38bdf8', 'TP1 (+2.0R)');
+      drawLevel(2753.00, '#a7f3d0', 'Checkpoint +1.0R');
+      drawLevel(2748.85, '#34d399', 'Locked BEP+ SL');
+      drawLevel(2748.50, '#60a5fa', 'BUY Entry');
+      drawLevel(2744.00, '#f43f5e', 'Initial Hard SL');
+
+      ctx.setLineDash([]);
+      const candles = [
+        [2749.2, 2751.4, 2748.1, 2750.5],
+        [2750.5, 2752.8, 2749.0, 2751.9],
+        [2751.9, 2753.1, 2749.5, 2750.0],
+        [2750.0, 2750.8, 2747.2, 2747.8],
+        [2747.8, 2748.9, 2745.9, 2746.5],
+        [2746.5, 2747.5, 2744.6, 2747.1],
+        [2747.1, 2749.1, 2746.8, 2748.6],
+        [2748.6, 2751.2, 2748.2, 2750.8],
+        [2750.8, 2753.4, 2750.1, 2753.1],
+        [2753.1, 2755.2, 2752.2, 2754.6]
+      ];
+
+      candles.forEach((c, idx) => {
+        const [o, h, l, cl] = c;
+        const x = 52 + idx * 48;
+        const bull = cl >= o;
+        ctx.strokeStyle = bull ? '#10b981' : '#f43f5e';
+        ctx.fillStyle = bull ? '#10b981' : '#f43f5e';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x, yOf(h));
+        ctx.lineTo(x, yOf(l));
+        ctx.stroke();
+        const top = yOf(Math.max(o, cl));
+        const bot = yOf(Math.min(o, cl));
+        ctx.fillRect(x - 7, top, 14, Math.max(bot - top, 3));
+      });
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
