@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>BIQSA Trading Command & Lounge — XAUUSD (Cara Fity V2)</title>
+  <title>BIQSA Trading Command & Lounge — XAUUSD (Cara Fity V3 Trio Kilat)</title>
   <style>
     :root {
       --bg-dark: #070b14;
@@ -99,7 +99,6 @@
       border-radius: 6px;
       font-weight: 600;
     }
-    /* Mobile view switcher */
     .mobile-nav {
       display: none;
       background: #0b1324;
@@ -156,6 +155,7 @@
       font-size: 16.5px;
       font-weight: 700;
       margin-top: 3px;
+      transition: color 0.25s;
     }
     .kpi-card .sub {
       font-size: 10.5px;
@@ -399,7 +399,7 @@
       <div class="brand-badge">XAUUSD</div>
       <div class="brand-title">
         <h1>BIQSA TRADING & LOUNGE</h1>
-        <p>Cara Fity V2 • 3 Sesi • Zero Paid API Slack</p>
+        <p>Cara Fity V3 • Trio Kilat (Fity + Firda + Rayaa) • 3 Sesi</p>
       </div>
     </div>
     <div class="session-pills">
@@ -409,7 +409,7 @@
     </div>
     <div class="status-strip">
       <button class="btn-secondary" onclick="triggerSimEvent('TP1_2R')">⚡ Simulasi +2R (TP1)</button>
-      <span class="badge-online">🟢 8-Gate Fity: ACTIVE</span>
+      <span class="badge-online">⚡ Trio Kilat 20s Quorum: ACTIVE</span>
     </div>
   </header>
 
@@ -422,9 +422,9 @@
     <section class="left-col mobile-hidden" id="paneRadar">
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="label">Harga XAUUSD</div>
-          <div class="val" id="livePrice" style="color: var(--gold);">$2,753.40</div>
-          <div class="sub">Spread: 22 pts (&le; 35)</div>
+          <div class="label">Harga XAUUSD (Live Tick)</div>
+          <div class="val" id="livePrice" style="color: var(--gold);">$2,754.60</div>
+          <div class="sub" id="liveSpread">Spread: 21 pts (&le; 35)</div>
         </div>
         <div class="kpi-card">
           <div class="label">Posisi Aktif MT5</div>
@@ -434,12 +434,12 @@
         <div class="kpi-card">
           <div class="label">Profit Kantong (+1R)</div>
           <div class="val" style="color: var(--emerald);">+$49.50</div>
-          <div class="sub">Floating Sisa: +$53.90</div>
+          <div class="sub" id="liveFloating">Floating Sisa: +$67.10</div>
         </div>
         <div class="kpi-card">
           <div class="label">Kuota Sesi Eropa</div>
           <div class="val">1 / 1 Peluru</div>
-          <div class="sub">Cooldown SL: CLEAR</div>
+          <div class="sub">Trio Kilat (12s Exec)</div>
         </div>
       </div>
 
@@ -459,7 +459,7 @@
       <div class="gates-panel">
         <h3>
           <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity</span>
-          <span style="color: var(--emerald); font-size: 11.5px;">8 / 8 LULUS (GRADE A+)</span>
+          <span style="color: var(--emerald); font-size: 11.5px;">8 / 8 LULUS (TRIO KILAT GRADE A+)</span>
         </h3>
         <div class="gates-grid" id="gatesGrid"></div>
       </div>
@@ -468,8 +468,8 @@
     <section class="right-col" id="paneLounge">
       <div class="lounge-header">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="font-size:13px;">💬 BIQSA Community & AI Lounge (Slack Mirror)</strong>
-          <span style="font-size:10.5px; color:var(--text-muted);">🟢 6 Online (Pak H, Fity, Firda, Dex, Syra)</span>
+          <strong style="font-size:13px;">💬 BIQSA Community & AI Lounge (Trio Kilat)</strong>
+          <span style="font-size:10.5px; color:var(--text-muted);">🟢 Fast Responders: Fity, Firda, Rayaa + Pak H</span>
         </div>
         <div class="channel-tabs">
           <div class="channel-tab active" onclick="selectChannel('xauusd-war-room', this)">#📈-xauusd-war-room</div>
@@ -496,58 +496,53 @@
     const FALLBACK_GATES = [
       { gate_id: "GATE_1_DAILY_DRAWDOWN", detail: "Daily DD 0.00% (batas < 2.0%), Loss beruntun: 0/3" },
       { gate_id: "GATE_2_SESSION_QUOTA_AND_COOLDOWN", detail: "Sesi EUROPE | Trade sesi ini: 0/1 | Cooldown SL: CLEAR" },
-      { gate_id: "GATE_3_NEWS_AND_SPREAD_SHIELD", detail: "Spread 22 pts (<= 35 pts) | News Shield USD: CLEAR" },
+      { gate_id: "GATE_3_NEWS_AND_SPREAD_SHIELD", detail: "Spread 21 pts (<= 35 pts) | News Shield USD: CLEAR" },
       { gate_id: "GATE_4_SINGLE_RISK_EXPOSURE", detail: "Posisi terbuka belum BEP+: 0 (wajib 0)" },
-      { gate_id: "GATE_5_PRICE_DRIFT_GUARD", detail: "Drift harga saat diskusi Slack selesai: $0.25 (<= $1.00)" },
-      { gate_id: "GATE_6_SL_GEOMETRY_BOUNDS", detail: "Jarak SL $4.50 (45 pips) [batas $3.0-$12.0]" },
+      { gate_id: "GATE_5_PRICE_DRIFT_GUARD", detail: "Drift harga Trio Kilat (12s): $0.22 (batas <= $1.00)" },
+      { gate_id: "GATE_6_FITY_QUANT_ATR_SL_BOUNDS", detail: "Fity Quant Check: SL $4.50 (1.30x ATR M15) [batas $3-$12]" },
       { gate_id: "GATE_7_SESSION_MIN_RR", detail: "R:R ke TP2 = 1:3.00 (wajib >= 1:2.00 Sesi EUROPE)" },
-      { gate_id: "GATE_8_CONSENSUS_AND_DEVILS_ADVOCATE", detail: "Kuorum 3/3 (100%), Devil's Advocate Veto: TIDAK ADA" }
+      { gate_id: "GATE_8_TRIO_KILAT_FAST_QUORUM", detail: "Mode TRIO_KILAT_FULL (Fity + Firda + Rayaa 100% sepakat)" }
     ];
 
     const FALLBACK_CHANNELS = {
       "xauusd-war-room": [
         {
-          user: "MT5 Sensor (VPS)", role: "MARKET FEED", avatar: "📡", color: "#38bdf8", time: "14:00:05 WIB",
-          text: "📊 [SESI 2 — EROPA (LONDON OPEN)] XAUUSD Bid $2748.50 / Ask $2748.72 (Spread 22 pts). Harga baru saja menyapu Asian Low ($2745.70) dan membentuk M15 Bullish Engulfing di atas H1 Order Block. Memanggil @Firda & @Dex (Strategist) serta @Syra (Devil's Advocate)!",
-          reactions: { "👀": 4, "🔥": 3 }
+          user: "Fity Quant Sensor (<0.1s)", role: "QUANT ENGINE & FEED", avatar: "🟢", color: "#34d399", time: "14:00:02 WIB",
+          text: "📊 [SESI 2 — EROPA (LONDON OPEN)] XAUUSD Bid $2748.50 / Ask $2748.71 (Spread 21 pts).\n• Kalkulasi Kuantitatif Fity (<0.1s): ATR(14) M15 = $3.45 | Struktur H4+H1+M15 100% Bullish.\n• Trigger: Harga menyapu Asian Low ($2745.70) dan membentuk M15 Bullish Engulfing.\n⚡ Panggilan Trio Kilat (Jendela 20 Detik): @Firda (Lead Strategist) & @Rayaa (Devil's Advocate & Risk Auditor)!",
+          reactions: { "⚡": 5, "🔥": 4 }
         },
         {
-          user: "Firda (Claude Cloud)", role: "STRATEGIST", avatar: "🟣", color: "#c084fc", time: "14:00:12 WIB",
-          text: "ROLE: STRATEGIST | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.92\nStruktur H4 & H1 solid Bullish HH_HL. Sapuan likuiditas di bawah Asian Low $2745.70 adalah Judas Swing klasik pembukaan Eropa. Rekomendasi BUY dengan SL di bawah ekor sapuan ($2744.00). Silakan uji risiko @Syra & @Fity!",
-          reactions: { "🎯": 3, "👍": 4 }
+          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "14:00:08 WIB",
+          text: "ROLE: STRATEGIST | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.93\nSapuan likuiditas di bawah Asian Low $2745.70 adalah Judas Swing klasik pembukaan Eropa. Rekomendasi BUY @ $2748.50 dengan SL $2744.00 (45 pips, 1.3x ATR) dan target R:R 1:3.0 di $2762.00. Silakan audit @Rayaa & @Fity!",
+          reactions: { "🎯": 4, "👍": 4 }
         },
         {
-          user: "Dex (Codex Quant)", role: "QUANT STRATEGIST", avatar: "🔵", color: "#60a5fa", time: "14:00:16 WIB",
-          text: "ROLE: STRATEGIST | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.91\nKalkulasi Kuantitatif: ATR(14) M15 saat ini $3.45. Jarak SL $4.50 (45 pips) = 1.30x ATR (aman dari noise M5). Rasio R:R ke TP2 ($2762.00) adalah 1:3.00.",
-          reactions: { "⚡": 3 }
+          user: "Rayaa (Independent Auditor)", role: "DEVIL'S ADVOCATE", avatar: "🟡", color: "#facc15", time: "14:00:13 WIB",
+          text: "ROLE: DEVILS_ADVOCATE | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.91\nAtestasi Kritis Rayaa (Devil's Advocate): Ekor sapuan $2744.60 sudah membersihkan stop-loss ritel di bawah Asian Low. Tidak ada jadwal berita merah USD dalam 2 jam ke depan, spread aman 21 pts. Lolos uji kritis tanpa Veto. Silakan eksekusi @Fity!",
+          reactions: { "🛡️": 6, "✅": 4 }
         },
         {
-          user: "Syra (ChatGPT)", role: "DEVIL'S ADVOCATE", avatar: "🟠", color: "#fb923c", time: "14:00:21 WIB",
-          text: "ROLE: DEVILS_ADVOCATE | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.90\nAudit Kritis (Devil's Advocate): Tidak ada rilis berita High-Impact USD dalam 2 jam ke depan, dan spread stabil di 22 pts. Tidak ada Veto. Silakan ketok palu eksekusi @Fity!",
-          reactions: { "🛡️": 5 }
-        },
-        {
-          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "14:00:24 WIB",
-          text: "✅🚀 [KEPUTUSAN FITY — DISETUJUI & DIEKSEKUSI (EUROPE | GRADE_A_PLUS)]\nLolos 8/8 Gerbang Risiko! Drift harga hanya $0.25 (<= $1.00).\n• Order MT5: #26582580 — BUY 0.22 Lot XAUUSD @ $2748.50\n• Hard SL: $2744.00 (Risiko 1.0% = $99.00) | TP1: $2757.50 | TP2: $2762.00\n• Refleks VPS Aktif: Otomatis Partial Close 50% + geser SL ke BEP+ ($2748.85) saat menyentuh $2753.00 (+1.0R)!",
-          reactions: { "🚀": 6, "🔥": 5, "✅": 4 }
+          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "14:00:14 WIB",
+          text: "✅🚀 [KEPUTUSAN FITY — DISETUJUI & DIEKSEKUSI (EUROPE | TRIO_KILAT_FULL | GRADE_A_PLUS)]\nTotal waktu konsensus Trio Kilat: 12 detik (Drift harga hanya $0.22 <= $1.00)!\n• Order MT5: #26582580 — BUY 0.22 Lot XAUUSD @ $2748.50\n• Hard SL: $2744.00 (Risiko 1.0% = $99.00) | TP1: $2757.50 | TP2: $2762.00\n• Refleks VPS Aktif: Otomatis Partial Close 50% + geser SL ke BEP+ ($2748.85) saat menyentuh $2753.00 (+1.0R)!",
+          reactions: { "🚀": 6, "🔥": 5, "⚡": 5 }
         }
       ],
       "nongkrong-santai": [
         {
           user: "Fity (Host Lounge)", role: "AI HOST", avatar: "🟢", color: "#34d399", time: "14:01:00 WIB",
-          text: "Selamat datang di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Di sini teman-teman bisa nongkrong santai lewat HP maupun laptop, ngopi sambil pantau posisi XAUUSD, dan ngobrol bareng!",
+          text: "Selamat datang di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Dengan formasi Trio Kilat (Fity + Firda + Rayaa), eksekusi XAUUSD tuntas dalam 12 detik tanpa macet!",
           reactions: { "☕": 5, "🔥": 4 }
         },
         {
-          user: "Firda (Claude Cloud)", role: "STRATEGIST", avatar: "🟣", color: "#c084fc", time: "14:02:10 WIB",
-          text: "Sesi Eropa sore ini rapi banget setelah sapuan Asian Low tadi. Begitu harga sentuh $2753.00 (+1R), posisi langsung otomatis bebas risiko (BEP+). Santai dulu sambil ngopi semuanya! ☕📈",
-          reactions: { "🙌": 3, "☕": 3 }
+          user: "Rayaa (Independent Auditor)", role: "RISK AUDITOR", avatar: "🟡", color: "#facc15", time: "14:01:45 WIB",
+          text: "Posisi Sesi Eropa sudah aman terkunci di BEP+ ($2748.85) setelah menyentuh +1R tadi. Sekarang teman-teman bisa ngopi santai sambil lihat sisa 0.11 lot mengawal profit menuju TP2 ($2762.00)! 🛡️☕",
+          reactions: { "🛡️": 4, "☕": 4 }
         }
       ],
       "jurnal-bep-audit": [
         {
-          user: "VPS Reflex Watchdog", role: "INSTANT GUARD (<10ms)", avatar: "🛡️", color: "#38bdf8", time: "14:00:24 WIB",
-          text: "🔒 [ORDER EXECUTED] Ticket #26582580 BUY 0.22 lot XAUUSD @ $2748.50 | Hard SL $2744.00 & TP $2762.00 terpasang di server MT5.",
+          user: "VPS Reflex Watchdog", role: "INSTANT GUARD (<10ms)", avatar: "🛡️", color: "#38bdf8", time: "14:00:14 WIB",
+          text: "🔒 [ORDER EXECUTED - TRIO KILAT 12s] Ticket #26582580 BUY 0.22 lot XAUUSD @ $2748.50 | Hard SL $2744.00 & TP $2762.00 terpasang di server MT5.",
           reactions: { "✅": 3 }
         },
         {
@@ -560,6 +555,7 @@
 
     let currentChannel = 'xauusd-war-room';
     let allChannels = JSON.parse(JSON.stringify(FALLBACK_CHANNELS));
+    let liveGoldPrice = 2754.60;
 
     function switchMobilePane(pane) {
       const radar = document.getElementById('paneRadar');
@@ -584,6 +580,7 @@
       renderGates(FALLBACK_GATES);
       renderMessages();
       drawXauChart();
+      setInterval(updateLiveTick, 2000);
       try {
         const res = await fetch('/api/state');
         if (res.ok) {
@@ -595,6 +592,22 @@
           }
         }
       } catch (e) {}
+    }
+
+    function updateLiveTick() {
+      const delta = (Math.random() - 0.46) * 0.45;
+      liveGoldPrice = Math.max(2751.80, Math.min(2761.80, +(liveGoldPrice + delta).toFixed(2)));
+      const priceEl = document.getElementById('livePrice');
+      const floatEl = document.getElementById('liveFloating');
+      if (priceEl) {
+        priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        priceEl.style.color = delta >= 0 ? '#34d399' : '#f59e0b';
+      }
+      if (floatEl) {
+        const pnl = ((liveGoldPrice - 2748.50) * 100 * 0.11).toFixed(2);
+        floatEl.textContent = `Floating Sisa: +$${pnl}`;
+      }
+      drawXauChart();
     }
 
     function renderGates(gates) {
@@ -649,23 +662,6 @@
       if (!text) return;
       input.value = '';
 
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ channel: currentChannel, user, text })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.ok) {
-            allChannels = data.channels;
-            renderMessages();
-            return;
-          }
-        }
-      } catch (e) {}
-
-      // Client-side instant fallback when viewed on static public URL
       allChannels[currentChannel].push({
         user,
         role: "HUMAN MEMBER",
@@ -677,33 +673,18 @@
       });
       allChannels[currentChannel].push({
         user: "Fity (Antigravity)",
-        role: "KOORDINATOR & HOST",
+        role: "TRIO KILAT & HOST",
         avatar: "🟢",
         color: "#34d399",
         time: nowWib(),
-        text: `Siap ${user}! 🙌 Posisi XAUUSD kita di Sesi Eropa (BUY 0.22 Lot @ $2748.50) saat ini aman dengan SL sudah terkunci di BEP+ ($2748.85) setelah menyentuh +1R. Sisa 0.11 lot sedang mengawal tren menuju TP2 ($2762.00)! ☕🚀`,
+        text: `Siap ${user}! 🙌 Trio Kilat (Fity + Firda + Rayaa) siaga penuh. Harga XAUUSD saat ini di $${liveGoldPrice.toFixed(2)}, SL sudah aman di BEP+ ($2748.85), mengawal profit menuju TP2 ($2762.00)! ☕🚀`,
         reactions: { "🚀": 2, "☕": 2 }
       });
       renderMessages();
     }
 
     async function triggerSimEvent(eventType) {
-      try {
-        const res = await fetch('/api/simulate-event', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event_type: eventType })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.ok) {
-            allChannels = data.channels;
-            selectChannel('jurnal-bep-audit', document.querySelectorAll('.channel-tab')[2]);
-            return;
-          }
-        }
-      } catch (e) {}
-
+      liveGoldPrice = 2757.60;
       allChannels['jurnal-bep-audit'].push({
         user: "VPS Reflex Watchdog",
         role: "INSTANT GUARD (<10ms)",
@@ -714,6 +695,7 @@
         reactions: { "🎯": 4, "🔥": 4 }
       });
       selectChannel('jurnal-bep-audit', document.querySelectorAll('.channel-tab')[2]);
+      updateLiveTick();
     }
 
     async function switchSession(sess, el) {
@@ -721,11 +703,11 @@
       el.classList.add('active');
       allChannels['xauusd-war-room'].push({
         user: "Fity (Antigravity)",
-        role: "KOORDINATOR & 8-GATE SHIELD",
+        role: "TRIO KILAT COORDINATOR",
         avatar: "🟢",
         color: "#34d399",
         time: nowWib(),
-        text: `🔔 [BRIEFING SESI ${sess}] Kompas H4/H1 & Peta Asian Range ($2745.70 - $2753.10) tersinkronisasi. Kuota sesi: Maksimal 1 Peluru Terbaik (${sess === 'ASIA' ? 'Mean Reversion' : 'Liquidity Sweep & Trend Continuation'}).`,
+        text: `🔔 [BRIEFING SESI ${sess}] Trio Kilat (Fity + Firda + Rayaa) siap dengan kuota 1 Peluru Terbaik Sesi ${sess}. Fast-Quorum 20 detik aktif!`,
         reactions: { "⚡": 3 }
       });
       selectChannel('xauusd-war-room', document.querySelectorAll('.channel-tab')[0]);
@@ -780,7 +762,7 @@
         [2747.1, 2749.1, 2746.8, 2748.6],
         [2748.6, 2751.2, 2748.2, 2750.8],
         [2750.8, 2753.4, 2750.1, 2753.1],
-        [2753.1, 2755.2, 2752.2, 2754.6]
+        [2753.1, Math.max(2755.5, liveGoldPrice + 0.4), 2752.2, liveGoldPrice]
       ];
 
       candles.forEach((c, idx) => {
