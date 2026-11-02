@@ -486,8 +486,8 @@
 
       <div class="chat-composer">
         <input id="nickInput" type="text" value="☕ Sobat BIQSA" style="max-width:105px; flex:0 0 105px;" title="Nama Panggilan" />
-        <input id="pinInput" type="password" placeholder="🔑PIN" style="max-width:58px; flex:0 0 58px; text-align:center;" title="PIN Founder Pak H (8888) untuk komando di War Room" />
-        <input id="chatInput" type="text" placeholder="Ketik ke Fity/Firda di #nongkrong-santai (atau PIN 8888 di War Room)..." onkeydown="if(event.key==='Enter') sendChat()" />
+        <input id="pinInput" type="password" placeholder="🔑PIN" style="max-width:58px; flex:0 0 58px; text-align:center;" title="Kunci Otorisasi Founder untuk mengirim komando di War Room" />
+        <input id="chatInput" type="text" placeholder="Ketik ke Fity/Firda di #nongkrong-santai (atau Kunci Founder di War Room)..." onkeydown="if(event.key==='Enter') sendChat()" />
         <button class="btn" onclick="sendChat()">Kirim</button>
       </div>
     </section>
@@ -817,7 +817,7 @@
       input.value = '';
       localStorage.setItem('biqsa_lounge_nick', user);
 
-      const isFounderWarRoom = (currentChannel === 'xauusd-war-room' && pin === '8888');
+      const isFounderWarRoom = (currentChannel === 'xauusd-war-room' && pin.length > 0);
 
       if (!isFounderWarRoom && currentChannel !== 'nongkrong-santai') {
         const tabs = document.querySelectorAll('.channel-tab');
@@ -825,17 +825,6 @@
       }
 
       const targetCh = isFounderWarRoom ? 'xauusd-war-room' : 'nongkrong-santai';
-      allChannels[targetCh].push({
-        user: isFounderWarRoom ? '👑 Pak H (Founder Command)' : user,
-        role: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "FOUNDER & COMMANDER" : "MEMBER NONGKRONG",
-        avatar: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "👑" : "☕",
-        color: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "#facc15" : "#38bdf8",
-        time: nowWib(),
-        text,
-        reactions: { "☕": 1 }
-      });
-      renderMessages(true);
-
       try {
         const postUrl = isFounderWarRoom ? `${EDGE_API_BASE}/api/chat` : `${NONGKRONG_API_BASE}/api/nongkrong/chat`;
         const res = await fetch(postUrl, {
@@ -843,6 +832,20 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user, text, channel: targetCh, pin })
         });
+        if (res.status === 403) {
+          alert('🔒 Kunci Otorisasi Founder tidak valid. Untuk mengobrol umum, silakan gunakan tab #☕-nongkrong-santai.');
+          return;
+        }
+        allChannels[targetCh].push({
+          user: isFounderWarRoom ? '👑 Pak H (Founder Command)' : user,
+          role: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "FOUNDER & COMMANDER" : "MEMBER NONGKRONG",
+          avatar: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "👑" : "☕",
+          color: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "#facc15" : "#38bdf8",
+          time: nowWib(),
+          text,
+          reactions: { "☕": 1 }
+        });
+        renderMessages(true);
         if (res.ok) {
           setTimeout(() => syncFromCloudflareEdge(true), 800);
         }
