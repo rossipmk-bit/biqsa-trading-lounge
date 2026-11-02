@@ -467,32 +467,29 @@
 
     <section class="right-col" id="paneLounge">
       <div class="lounge-header">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <strong style="font-size:13px;">💬 BIQSA Community & AI Lounge (Trio Kilat)</strong>
-          <span style="font-size:10.5px; color:var(--text-muted);">🟢 Fast Responders: Fity, Firda, Rayaa + Pak H</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+          <strong style="font-size:13px;">💬 BIQSA Community & AI Lounge (Cloudflare Edge)</strong>
+          <span id="channelModeBadge" style="font-size:10px; padding:2px 7px; border-radius:6px; background:rgba(245,158,11,0.15); color:#fbbf24;">🔒 READ-ONLY MIRROR (#biqsa-trading Steril)</span>
         </div>
         <div class="channel-tabs">
-          <div class="channel-tab active" onclick="selectChannel('xauusd-war-room', this)">#📈-xauusd-war-room</div>
-          <div class="channel-tab" onclick="selectChannel('nongkrong-santai', this)">#☕-nongkrong-santai</div>
-          <div class="channel-tab" onclick="selectChannel('jurnal-bep-audit', this)">#🛡️-jurnal-bep-audit</div>
+          <div class="channel-tab active" onclick="selectChannel('xauusd-war-room', this)">🔒 #📈-xauusd-war-room</div>
+          <div class="channel-tab" onclick="selectChannel('nongkrong-santai', this)">💬 #☕-nongkrong-santai (Interactive)</div>
+          <div class="channel-tab" onclick="selectChannel('jurnal-bep-audit', this)">🔒 #🛡️-jurnal-bep-audit</div>
         </div>
       </div>
 
       <div class="chat-stream" id="chatStream"></div>
 
       <div class="chat-composer">
-        <select id="senderSelect">
-          <option value="Pak H (Founder)">👑 Pak H</option>
-          <option value="Sobat Trader BIQSA">☕ Sobat</option>
-          <option value="Tamu VIP Lounge">🚀 Tamu</option>
-        </select>
-        <input id="chatInput" type="text" placeholder="Ketik obrolan santai atau panggil @Fity..." onkeydown="if(event.key==='Enter') sendChat()" />
+        <input id="nickInput" type="text" value="☕ Sobat BIQSA" style="max-width:115px; flex:0 0 115px;" title="Nama Panggilan" />
+        <input id="chatInput" type="text" placeholder="Ngobrol santai lintas HP di #☕-nongkrong-santai (Tanpa ganggu AI)..." onkeydown="if(event.key==='Enter') sendChat()" />
         <button class="btn" onclick="sendChat()">Kirim</button>
       </div>
     </section>
   </main>
 
   <script>
+    const EDGE_API_BASE = "https://biqsa-trading-lounge.rossipmk.workers.dev";
     const FALLBACK_GATES = [
       { gate_id: "GATE_1_DAILY_DRAWDOWN", detail: "Daily DD 0.00% (batas < 2.0%), Loss beruntun: 0/3" },
       { gate_id: "GATE_2_SESSION_QUOTA_AND_COOLDOWN", detail: "Sesi ASIA | Peluru terpakai: 0/1 | Cooldown SL: CLEAR" },
@@ -576,26 +573,43 @@
       }
     }
 
-    async function loadState() {
-      renderGates(FALLBACK_GATES);
-      renderMessages();
-      drawXauChart();
-      setInterval(updateLiveTick, 2000);
+    async function syncFromCloudflareEdge() {
       try {
-        const res = await fetch('/api/state');
+        const res = await fetch(`${EDGE_API_BASE}/api/state`);
         if (res.ok) {
           const data = await res.json();
-          if (data.ok) {
+          if (data.ok && data.channels) {
             allChannels = data.channels;
-            renderGates(data.cycle.decision.gates);
+            if (data.telemetry && data.telemetry.bid) {
+              liveGoldPrice = Number(data.telemetry.bid);
+              const priceEl = document.getElementById('livePrice');
+              if (priceEl) {
+                priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+              }
+            }
             renderMessages();
+            drawXauChart();
           }
         }
       } catch (e) {}
     }
 
+    async function loadState() {
+      const savedNick = localStorage.getItem('biqsa_lounge_nick');
+      if (savedNick) {
+        const nickEl = document.getElementById('nickInput');
+        if (nickEl) nickEl.value = savedNick;
+      }
+      renderGates(FALLBACK_GATES);
+      renderMessages();
+      drawXauChart();
+      await syncFromCloudflareEdge();
+      setInterval(updateLiveTick, 2500);
+      setInterval(syncFromCloudflareEdge, 4000);
+    }
+
     function updateLiveTick() {
-      const delta = (Math.random() - 0.48) * 0.45;
+      const delta = (Math.random() - 0.48) * 0.35;
       liveGoldPrice = Math.max(3908.50, Math.min(3917.20, +(liveGoldPrice + delta).toFixed(2)));
       const priceEl = document.getElementById('livePrice');
       if (priceEl) {
@@ -619,6 +633,18 @@
       currentChannel = ch;
       document.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
       if (el) el.classList.add('active');
+      const badge = document.getElementById('channelModeBadge');
+      if (badge) {
+        if (ch === 'nongkrong-santai') {
+          badge.style.background = 'rgba(16,185,129,0.18)';
+          badge.style.color = '#34d399';
+          badge.textContent = '🟢 INTERACTIVE LIVE CHAT (Bebas Ngobrol Tanpa Ganggu AI)';
+        } else {
+          badge.style.background = 'rgba(245,158,11,0.15)';
+          badge.style.color = '#fbbf24';
+          badge.textContent = '🔒 READ-ONLY MIRROR (#biqsa-trading Steril)';
+        }
+      }
       renderMessages();
     }
 
@@ -652,30 +678,44 @@
 
     async function sendChat() {
       const input = document.getElementById('chatInput');
-      const user = document.getElementById('senderSelect').value;
+      const nickEl = document.getElementById('nickInput');
+      const user = (nickEl ? nickEl.value.trim() : '') || '☕ Sobat BIQSA';
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
+      localStorage.setItem('biqsa_lounge_nick', user);
 
-      allChannels[currentChannel].push({
+      // Automatically switch to #nongkrong-santai if currently on a read-only mirror tab
+      if (currentChannel !== 'nongkrong-santai') {
+        const tabs = document.querySelectorAll('.channel-tab');
+        selectChannel('nongkrong-santai', tabs[1]);
+      }
+
+      allChannels['nongkrong-santai'].push({
         user,
-        role: "HUMAN MEMBER",
-        avatar: user.includes("Pak H") ? "👑" : "☕",
-        color: user.includes("Pak H") ? "#facc15" : "#e2e8f0",
+        role: user.toLowerCase().includes("pak h") ? "FOUNDER & COMMANDER" : "MEMBER NONGKRONG",
+        avatar: user.toLowerCase().includes("pak h") ? "👑" : "☕",
+        color: user.toLowerCase().includes("pak h") ? "#facc15" : "#38bdf8",
         time: nowWib(),
         text,
-        reactions: { "🔥": 1 }
-      });
-      allChannels[currentChannel].push({
-        user: "Fity (Antigravity)",
-        role: "TRIO KILAT & HOST",
-        avatar: "🟢",
-        color: "#34d399",
-        time: nowWib(),
-        text: `Siap ${user}! 🙌 Trio Kilat (Fity + Firda + Rayaa) siaga penuh. Harga XAUUSD saat ini di $${liveGoldPrice.toFixed(2)}, SL sudah aman di BEP+ ($2748.85), mengawal profit menuju TP2 ($2762.00)! ☕🚀`,
-        reactions: { "🚀": 2, "☕": 2 }
+        reactions: { "☕": 1 }
       });
       renderMessages();
+
+      try {
+        const res = await fetch(`${EDGE_API_BASE}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user, text })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ok && data.hangoutChat) {
+            allChannels['nongkrong-santai'] = data.hangoutChat;
+            renderMessages();
+          }
+        }
+      } catch (e) {}
     }
 
     async function triggerSimEvent(eventType) {
