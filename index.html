@@ -481,8 +481,9 @@
       <div class="chat-stream" id="chatStream"></div>
 
       <div class="chat-composer">
-        <input id="nickInput" type="text" value="☕ Sobat BIQSA" style="max-width:115px; flex:0 0 115px;" title="Nama Panggilan" />
-        <input id="chatInput" type="text" placeholder="Ngobrol santai lintas HP di #☕-nongkrong-santai (Tanpa ganggu AI)..." onkeydown="if(event.key==='Enter') sendChat()" />
+        <input id="nickInput" type="text" value="☕ Sobat BIQSA" style="max-width:105px; flex:0 0 105px;" title="Nama Panggilan" />
+        <input id="pinInput" type="password" placeholder="🔑PIN" style="max-width:58px; flex:0 0 58px; text-align:center;" title="PIN Founder Pak H (8888) untuk komando di War Room" />
+        <input id="chatInput" type="text" placeholder="Ketik ke Fity/Firda di #nongkrong-santai (atau PIN 8888 di War Room)..." onkeydown="if(event.key==='Enter') sendChat()" />
         <button class="btn" onclick="sendChat()">Kirim</button>
       </div>
     </section>
@@ -679,23 +680,27 @@
     async function sendChat() {
       const input = document.getElementById('chatInput');
       const nickEl = document.getElementById('nickInput');
+      const pinEl = document.getElementById('pinInput');
       const user = (nickEl ? nickEl.value.trim() : '') || '☕ Sobat BIQSA';
+      const pin = (pinEl ? pinEl.value.trim() : '');
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
       localStorage.setItem('biqsa_lounge_nick', user);
 
-      // Automatically switch to #nongkrong-santai if currently on a read-only mirror tab
-      if (currentChannel !== 'nongkrong-santai') {
+      const isFounderWarRoom = (currentChannel === 'xauusd-war-room' && pin === '8888');
+
+      if (!isFounderWarRoom && currentChannel !== 'nongkrong-santai') {
         const tabs = document.querySelectorAll('.channel-tab');
         selectChannel('nongkrong-santai', tabs[1]);
       }
 
-      allChannels['nongkrong-santai'].push({
-        user,
-        role: user.toLowerCase().includes("pak h") ? "FOUNDER & COMMANDER" : "MEMBER NONGKRONG",
-        avatar: user.toLowerCase().includes("pak h") ? "👑" : "☕",
-        color: user.toLowerCase().includes("pak h") ? "#facc15" : "#38bdf8",
+      const targetCh = isFounderWarRoom ? 'xauusd-war-room' : 'nongkrong-santai';
+      allChannels[targetCh].push({
+        user: isFounderWarRoom ? '👑 Pak H (Founder Command)' : user,
+        role: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "FOUNDER & COMMANDER" : "MEMBER NONGKRONG",
+        avatar: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "👑" : "☕",
+        color: (isFounderWarRoom || user.toLowerCase().includes("pak h")) ? "#facc15" : "#38bdf8",
         time: nowWib(),
         text,
         reactions: { "☕": 1 }
@@ -706,12 +711,13 @@
         const res = await fetch(`${EDGE_API_BASE}/api/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user, text })
+          body: JSON.stringify({ user, text, channel: targetCh, pin })
         });
         if (res.ok) {
           const data = await res.json();
-          if (data.ok && data.hangoutChat) {
-            allChannels['nongkrong-santai'] = data.hangoutChat;
+          if (data.ok) {
+            if (data.hangoutChat) allChannels['nongkrong-santai'] = data.hangoutChat;
+            if (data.warRoomMirror) allChannels['xauusd-war-room'] = data.warRoomMirror;
             renderMessages();
           }
         }
