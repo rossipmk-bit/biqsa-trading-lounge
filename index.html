@@ -704,7 +704,7 @@
             const ind = d.indicators[tfKey];
             const el = document.getElementById(elId);
             if (!ind || !el) return;
-            const tr = String(ind.trend || 'RANGING').toUpperCase();
+            const tr = String(ind.trend_bias || ind.trend || 'RANGING').toUpperCase();
             const col = tr.includes('BULL') ? '#34d399' : (tr.includes('BEAR') ? '#fb7185' : '#fde68a');
             el.innerHTML = `<b style="color:#e2e8f0;">${tfKey}:</b> <span style="color:${col}; font-weight:700;">${tr}</span> <span style="color:#94a3b8;">(RSI ${Number(ind.rsi14 || 50).toFixed(0)} • ATR $${Number(ind.atr14 || 0).toFixed(1)})</span>`;
           };
