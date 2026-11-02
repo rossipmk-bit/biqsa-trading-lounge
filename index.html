@@ -408,52 +408,54 @@
       <div class="session-pill" onclick="switchSession('US', this)">🗽 Sesi 3: US</div>
     </div>
     <div class="status-strip">
-      <button class="btn-secondary" onclick="triggerSimEvent('TP1_2R')">⚡ Test Trigger Rencana A</button>
-      <span class="badge-online">🟢 biqsa-vps (103.93.161.203) • FBS-Demo #106857046 ACTIVE</span>
+      <button class="btn-secondary" id="tfM15Btn" style="border-color:var(--gold); color:#fde68a;" onclick="switchChartTf('M15')">📊 Chart M15 (FBS Live)</button>
+      <button class="btn-secondary" id="tfH1Btn" onclick="switchChartTf('H1')">📊 Chart H1 (FBS Live)</button>
+      <span class="badge-online" id="mt5BridgeBadge">🟢 biqsa-vps • FBS-Demo Native MT5 IPC (Build 6295) LIVE</span>
     </div>
   </header>
 
   <div class="mobile-nav">
     <button id="tabLoungeBtn" class="active" onclick="switchMobilePane('lounge')">💬 Lounge Nongkrong & AI</button>
-    <button id="tabRadarBtn" onclick="switchMobilePane('radar')">📈 Radar XAUUSD & 8-Gate</button>
+    <button id="tabRadarBtn" onclick="switchMobilePane('radar')">📈 Chart FBS Live & 8-Gate</button>
   </div>
 
   <main>
     <section class="left-col mobile-hidden" id="paneRadar">
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="label">Spot XAUUSD (Senin Sesi 1 Asia)</div>
-          <div class="val" id="livePrice" style="color: var(--gold);">$3,912.28</div>
-          <div class="sub" id="liveSpread">Spread: 25 pts (&le; 35) • Asian H/L: $3,917.58 / $3,893.58</div>
+          <div class="label" id="kpiSessionLabel">XAUUSD Native FBS-Demo (Sesi ASIA)</div>
+          <div class="val" id="livePrice" style="color: var(--gold);">Memuat...</div>
+          <div class="sub" id="liveSpread">Menghubungkan ke terminal64.exe...</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Status Posisi & Rencana A</div>
-          <div class="val">WAIT (SELL @ $3,916)</div>
-          <div class="sub">SL $3,926 • TP1 $3,899 • TP2 $3,884</div>
+          <div class="label">Rencana Aktif (Alur #2 Firda)</div>
+          <div class="val" id="livePlanTitle" style="font-size:14.5px; color:#38bdf8;">RENCANA A2 (SELL ASIA HIGH)</div>
+          <div class="sub" id="livePlanSub">Zona $3,912–$3,918 • Close M15 $3,910–$3,913</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Broker & Akun Tempur</div>
-          <div class="val" style="color: var(--emerald);">FBS-Demo #106857046</div>
-          <div class="sub" id="liveFloating">Standby Vault: FBS-Real-1 #43515968</div>
+          <div class="label">Ekuitas & Jembatan MT5</div>
+          <div class="val" id="liveEquity" style="color: var(--emerald);">$1,000.00 (1:500)</div>
+          <div class="sub" id="liveFloating">AlgoTrading: ON • Real Vault: STANDBY</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Kuota Sesi 1 (ASIA)</div>
-          <div class="val">0 / 1 Peluru</div>
-          <div class="sub">Risiko 0.50% • R:R 1:3.20</div>
+          <div class="label">Ukuran Lot & Risiko (Demo 2 Hari)</div>
+          <div class="val" id="liveLotInfo">0.01 Lot ($10 / 1.0%)</div>
+          <div class="sub" id="liveRrInfo">SL +$10 • TP1 -$15 (1:1.5) • TP2 $3,891</div>
         </div>
       </div>
 
       <div class="chart-box">
         <div class="chart-header">
-          <h2>📈 Live Radar XAUUSD (M15) — Sesi 1 ASIA (Senin Pagi • Rencana A: SELL @ $3,916)</h2>
+          <h2 id="chartTitle">📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Rencana A2)</h2>
           <div class="chart-legend">
-            <span>🟨 Asian High ($3,917.58) / Low ($3,893.58)</span>
-            <span>🟦 Trigger SELL ($3,916.00)</span>
-            <span>🟩 TP1 ($3,899.00) & TP2 ($3,884.00)</span>
-            <span>🟥 Hard SL ($3,926.00)</span>
+            <span style="color:#f59e0b;">━━ EMA 20</span>
+            <span style="color:#c084fc;">━━ EMA 50</span>
+            <span style="color:#38bdf8;">🟦 Zona Sell A2 ($3,912–$3,918)</span>
+            <span style="color:#fbbf24;">🟨 Asian H/L</span>
+            <span style="color:#10b981;">🟩 Target TP2 ($3,891)</span>
           </div>
         </div>
-        <canvas id="xauChart" width="720" height="230"></canvas>
+        <canvas id="xauChart" width="760" height="270" style="height:270px;"></canvas>
       </div>
 
       <div class="gates-panel">
@@ -505,47 +507,42 @@
     const FALLBACK_CHANNELS = {
       "xauusd-war-room": [
         {
-          user: "Fity Quant Sensor (biqsa-vps)", role: "VPS ENGINE 24/7", avatar: "🟢", color: "#34d399", time: "09:16:12 WIB",
-          text: "📊 [SENIN PAGI — SESI 1 ASIA LIVE] Mesin biqsa-vps (103.93.161.203) aktif di FBS-Demo #106857046 (FBS-Real-1 #43515968 Standby).\n• Spot XAU/USD: Bid $3,912.28 / Ask $3,912.53 (Spread 25 pts)\n• Asian High/Low Murni (>= 06:00 WIB): High $3,917.58 / Low $3,893.58\n• H4 & H1: BEARISH (H1 EMA20 $3,925.39, EMA50 $3,967.17) | M15: RANGING/PULLBACK (ATR $7.82)",
+          user: "Fity Quant Sensor (biqsa-vps)", role: "NATIVE MT5 IPC 24/7", avatar: "🟢", color: "#34d399", time: "11:48:00 WIB",
+          text: "📊 [NATIVE FBS-DEMO MT5 IPC LIVE] terminal64.exe (Build 6295) aktif 24/7 via Wine 11.0 + Xvfb di biqsa-vps.\n• Equity: $1,000.00 (1:500) | AlgoTrading: ON | Asian High/Low FBS: $3,914.99 / $3,890.99\n• H4 & H1: BEARISH | M15: RANGING | Fase Uji Tim Demo: 2 Hari",
           reactions: { "⚡": 5, "🔥": 4 }
         },
         {
-          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "09:15:50 WIB",
-          text: "ROLE: STRATEGIST | ACTION: WAIT | CONFIDENCE: 0.60\n• Rencana A (Utama - Searah Tren Turun H4/H1): SELL Bersyarat @ $3,916 | SL: $3,926 | TP1: $3,899 | TP2: $3,884 (R:R 1:3.20, Risiko 0.50%).\n• Syarat Trigger: Harga masuk zona $3,914–$3,918 lalu candle M15 tutup bearish di bawah $3,914. Pantang kejar breakout!",
-          reactions: { "🎯": 5, "👍": 4 }
+          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "12:08:33 WIB",
+          text: "ROLE: STRATEGIST | ACTION: WAIT -> SELL (Bersyarat) | RENCANA A2 (RENCANA_A2_SELL_ASIA_HIGH) | CONFIDENCE: 0.55\n• Zona: $3,912–$3,918 | Pemicu: High M15 masuk zona lalu tutup bearish di $3,910–$3,913.\n• Entry: Market SELL 0.01 lot (Risiko $10 = 1.0% Override Pak H) | SL: Entry + $10 | TP1: Entry - $15 (1:1.5) | TP2: $3,891 (Asian Low).\n• GATE_5: |fill - close pemicu| <= $1.00 | Batas Waktu: 13:30 WIB | Batal jika H1 close > $3,920.",
+          reactions: { "🎯": 6, "🛡️": 5 }
         },
         {
-          user: "Firda (Claude Cloud)", role: "QUALITY & RISK AUDIT", avatar: "🟣", color: "#c084fc", time: "09:18:55 WIB",
-          text: "Tiga catatan tajam Firda:\n1) Pastikan rentang Asia Spot murni menghitung candle >= 06:00 WIB (bukan ekor Jumat malam).\n2) GATE_8 jangan dianggap lolos otomatis kalau Rayaa diam — wajib tunggu Audit Rayaa ATAU ACK langsung Pak H.\n3) Tampilkan lengkap GATE_1 s/d GATE_8 termasuk GATE_5.",
-          reactions: { "🛡️": 6, "👏": 5 }
-        },
-        {
-          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "09:21:47 WIB",
-          text: "✅🔒 [3 KOREKSI FIRDA DITERAPKAN DI BIQSA-VPS (PID 2565460)]\n• Filter Asian Range dikunci >= 06:00 WIB: High $3,917.58 / Low $3,893.58.\n• GATE 1–7 Tervalidasi, GATE 8 dikunci aman menunggu Trigger M15 di $3,914–$3,918 + (Audit Rayaa ATAU ACK Pak H)!",
+          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "12:15:10 WIB",
+          text: "✅🔒 [ALUR #4 — RENCANA A2 TERKUNCI DI BIQSA-VPS]\n• Mesin 8-Gate aktif memantau penutupan candle M15 pada feed Native FBS-Demo.\n• GATE_7 dihitung dinamis dari harga entry aktual saat pemicu (TP1 1:1.50, TP2 1:1.90–1:2.20).",
           reactions: { "🚀": 6, "🛡️": 5, "☕": 4 }
         }
       ],
       "nongkrong-santai": [
         {
-          user: "Fity (Host Lounge)", role: "AI HOST", avatar: "🟢", color: "#34d399", time: "09:00:00 WIB",
-          text: "Selamat pagi Senin di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Mesin tempur di biqsa-vps (103.93.161.203) sudah menyala 24/7 dengan brankas FBS-Demo & FBS-Real-1!",
+          user: "Fity (Host Lounge)", role: "AI HOST", avatar: "🟢", color: "#34d399", time: "11:50:00 WIB",
+          text: "Selamat siang di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Chart di sebelah kiri sekarang langsung menggambar candle M15 & H1 asli dari terminal64.exe (FBS-Demo) di biqsa-vps!",
           reactions: { "☕": 5, "🔥": 4 }
         },
         {
-          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "09:19:00 WIB",
-          text: "Sesi 1 Asia pagi ini kita disiplin WAIT sambil siapkan jebakan SELL Rencana A di resistance $3,914–$3,918 (searah tren besar H4/H1). Ngopi santai dulu sambil pantau radar! 🛡️☕",
+          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "12:09:00 WIB",
+          text: "Kita sudah beralih ke Rencana A2 (SELL di area Asian High $3,912–$3,918 dengan konfirmasi close M15 $3,910–$3,913). Silakan ngopi santai sambil pantau pergerakan candle! 🛡️☕",
           reactions: { "🛡️": 4, "☕": 5 }
         }
       ],
       "jurnal-bep-audit": [
         {
-          user: "VPS Reflex Watchdog", role: "BIQSA-VPS (103.93.161.203)", avatar: "🛡️", color: "#38bdf8", time: "09:06:30 WIB",
-          text: "🔒 [FBS VAULT LOCKED - CHMOD 600] Akun FBS-Demo (#106857046) disetel ACTIVE & FBS-Real-1 (#43515968) tersimpan aman di brankas STANDBY.",
-          reactions: { "✅": 4 }
+          user: "VPS Reflex Watchdog", role: "BIQSA-VPS (SYSTEMD 24/7)", avatar: "🛡️", color: "#38bdf8", time: "11:45:50 WIB",
+          text: "🔒 [NATIVE MT5 BRIDGE ACTIVE] 4 layanan systemd (biqsa-xvfb, biqsa-mt5-bridge, biqsa-mt5-http, biqsa-mt5-tunnel) aktif 24/7. FBS-Demo ACTIVE ($1,000.00), FBS-Real-1 STANDBY VAULT.",
+          reactions: { "✅": 5 }
         },
         {
-          user: "VPS Reflex Watchdog", role: "BIQSA-VPS (PID 2565460)", avatar: "🛡️", color: "#34d399", time: "09:20:34 WIB",
-          text: "⚡ [HEARTBEAT ONLINE 24/7] Spot XAUUSD Bid $3,912.28 / Ask $3,912.53 (Spread 25 pts) | Asian H/L: $3,917.58 / $3,893.58 | Status: STANDBY TRIGGER RENCANA A ($3,916.00).",
+          user: "VPS Reflex Watchdog", role: "BIQSA-VPS (SIGNAL JOURNAL)", avatar: "🛡️", color: "#34d399", time: "12:15:30 WIB",
+          text: "⚡ [JURNAL SINYAL & 8-GATE AKTIF] RENCANA_A2_SELL_ASIA_HIGH terpasang (Lot Override 0.01 / Risiko $10 / Durasi Uji Tim: 2 Hari).",
           reactions: { "🔥": 5, "🛡️": 4 }
         }
       ]
@@ -553,7 +550,26 @@
 
     let currentChannel = 'xauusd-war-room';
     let allChannels = JSON.parse(JSON.stringify(FALLBACK_CHANNELS));
-    let liveGoldPrice = 3912.28;
+    let liveGoldPrice = 3905.50;
+    let liveFeedData = null;
+    let activeChartTf = 'M15';
+
+    function switchChartTf(tf) {
+      activeChartTf = tf;
+      const b15 = document.getElementById('tfM15Btn');
+      const bH1 = document.getElementById('tfH1Btn');
+      const titleEl = document.getElementById('chartTitle');
+      if (tf === 'M15') {
+        if (b15) { b15.style.borderColor = 'var(--gold)'; b15.style.color = '#fde68a'; }
+        if (bH1) { bH1.style.borderColor = 'var(--border)'; bH1.style.color = '#e2e8f0'; }
+        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Rencana A2)';
+      } else {
+        if (bH1) { bH1.style.borderColor = 'var(--gold)'; bH1.style.color = '#fde68a'; }
+        if (b15) { b15.style.borderColor = 'var(--border)'; b15.style.color = '#e2e8f0'; }
+        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (H1 — 40 Bar Terakhir + EMA20/50 + Rencana A2)';
+      }
+      drawXauChart();
+    }
 
     function switchMobilePane(pane) {
       const radar = document.getElementById('paneRadar');
@@ -574,6 +590,57 @@
       }
     }
 
+    async function syncNativeFbsFeed() {
+      try {
+        const res = await fetch(`${EDGE_API_BASE}/api/xauusd/live?t=${Date.now()}`);
+        if (!res.ok) return;
+        const d = await res.json();
+        if (!d || !d.ok) return;
+        liveFeedData = d;
+        const prevPrice = liveGoldPrice;
+        liveGoldPrice = Number(d.bid || liveGoldPrice);
+
+        const priceEl = document.getElementById('livePrice');
+        if (priceEl) {
+          priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / $${Number(d.ask).toFixed(2)}`;
+          priceEl.style.color = liveGoldPrice >= prevPrice ? '#34d399' : '#f59e0b';
+        }
+        const spreadEl = document.getElementById('liveSpread');
+        if (spreadEl) {
+          const spOk = Number(d.spread_points) <= 35;
+          spreadEl.innerHTML = `<span style="color:${spOk ? '#34d399' : '#f43f5e'}">Spread: ${d.spread_points} pts (${spOk ? '&le; 35 OK' : '&gt; 35 HOLD'})</span> • Asia H/L: $${Number(d.asian_range_high).toFixed(2)} / $${Number(d.asian_range_low).toFixed(2)}`;
+        }
+        const sessEl = document.getElementById('kpiSessionLabel');
+        if (sessEl) {
+          sessEl.textContent = `XAUUSD Native FBS-Demo (Sesi ${d.session_code || 'ASIA'} • ${d.timestamp_wib ? d.timestamp_wib.slice(11) : ''})`;
+        }
+        if (d.mt5_execution_bridge) {
+          const b = d.mt5_execution_bridge;
+          const eqEl = document.getElementById('liveEquity');
+          if (eqEl) eqEl.textContent = `$${Number(b.account_equity || 1000).toFixed(2)} (${b.account_leverage || '1:500'})`;
+          const flEl = document.getElementById('liveFloating');
+          if (flEl) flEl.textContent = `MT5 Build ${b.mt5_build || 6295}: ${b.mt5_terminal_connected ? 'CONNECTED' : 'OFFLINE'} • Algo: ${b.mt5_algo_trading_enabled ? 'ON' : 'OFF'}`;
+        }
+        if (d.standing_ack_gate8) {
+          const p = d.standing_ack_gate8;
+          const ptEl = document.getElementById('livePlanTitle');
+          if (ptEl) ptEl.textContent = `${p.active_plan || 'RENCANA_A2_SELL_ASIA_HIGH'}`;
+          const psEl = document.getElementById('livePlanSub');
+          if (psEl) psEl.textContent = `Zona $3,912–$3,918 • Close M15 $3,910–$3,913 (Batas 13:30 WIB)`;
+        }
+        if (d.gates) {
+          const gArr = Object.entries(d.gates).map(([k, v]) => ({
+            gate_id: k,
+            passed: v.passed,
+            status: v.status,
+            detail: v.detail
+          }));
+          renderGates(gArr);
+        }
+        drawXauChart();
+      } catch (e) {}
+    }
+
     async function syncFromCloudflareEdge() {
       try {
         const res = await fetch(`${EDGE_API_BASE}/api/state`);
@@ -581,15 +648,7 @@
           const data = await res.json();
           if (data.ok && data.channels) {
             allChannels = data.channels;
-            if (data.telemetry && data.telemetry.bid) {
-              liveGoldPrice = Number(data.telemetry.bid);
-              const priceEl = document.getElementById('livePrice');
-              if (priceEl) {
-                priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-              }
-            }
             renderMessages();
-            drawXauChart();
           }
         }
       } catch (e) {}
@@ -603,31 +662,24 @@
       }
       renderGates(FALLBACK_GATES);
       renderMessages();
-      drawXauChart();
-      await syncFromCloudflareEdge();
-      setInterval(updateLiveTick, 2500);
-      setInterval(syncFromCloudflareEdge, 4000);
-    }
-
-    function updateLiveTick() {
-      const delta = (Math.random() - 0.48) * 0.35;
-      liveGoldPrice = Math.max(3908.50, Math.min(3917.20, +(liveGoldPrice + delta).toFixed(2)));
-      const priceEl = document.getElementById('livePrice');
-      if (priceEl) {
-        priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        priceEl.style.color = delta >= 0 ? '#34d399' : '#f59e0b';
-      }
-      drawXauChart();
+      await Promise.all([syncNativeFbsFeed(), syncFromCloudflareEdge()]);
+      setInterval(syncNativeFbsFeed, 3000);
+      setInterval(syncFromCloudflareEdge, 5000);
     }
 
     function renderGates(gates) {
       const grid = document.getElementById('gatesGrid');
-      grid.innerHTML = gates.map(g => `
-        <div class="gate-item">
-          <strong>✅ ${g.gate_id}</strong>
-          <span>${g.detail}</span>
-        </div>
-      `).join('');
+      grid.innerHTML = gates.map(g => {
+        const icon = g.passed === true ? '✅' : (g.passed === false ? '🛑' : '⏳');
+        const col = g.passed === true ? '#34d399' : (g.passed === false ? '#f43f5e' : '#fbbf24');
+        const bdr = g.passed === true ? 'rgba(16, 185, 129, 0.35)' : (g.passed === false ? 'rgba(244, 63, 94, 0.45)' : 'rgba(245, 158, 11, 0.4)');
+        return `
+          <div class="gate-item" style="border-color:${bdr}">
+            <strong style="color:${col}">${icon} ${g.gate_id} ${g.status ? '[' + g.status + ']' : ''}</strong>
+            <span>${g.detail}</span>
+          </div>
+        `;
+      }).join('');
     }
 
     function selectChannel(ch, el) {
@@ -724,34 +776,17 @@
       } catch (e) {}
     }
 
-    async function triggerSimEvent(eventType) {
-      liveGoldPrice = 3915.80;
-      allChannels['jurnal-bep-audit'].push({
-        user: "VPS Reflex Watchdog",
-        role: "BIQSA-VPS (103.93.161.203)",
-        avatar: "🛡️",
-        color: "#60a5fa",
-        time: nowWib(),
-        text: "🎯 [ZONA TRIGGER RENCANA A DISENTUH ($3,915.80)] Menunggu penutupan candle M15 bearish di bawah $3,914 + (Audit Rayaa ATAU ACK Pak H) sebelum eksekusi SELL @ $3,916!",
-        reactions: { "🎯": 4, "🛡️": 4 }
-      });
-      selectChannel('jurnal-bep-audit', document.querySelectorAll('.channel-tab')[2]);
-      updateLiveTick();
-    }
-
-    async function switchSession(sess, el) {
-      document.querySelectorAll('.session-pill').forEach(p => p.classList.remove('active'));
-      el.classList.add('active');
-      allChannels['xauusd-war-room'].push({
-        user: "Fity (Antigravity)",
-        role: "TRIO KILAT COORDINATOR",
-        avatar: "🟢",
-        color: "#34d399",
-        time: nowWib(),
-        text: `🔔 [BRIEFING SESI ${sess}] Trio Kilat (Fity + Firda + Rayaa) siap dengan kuota 1 Peluru Terbaik Sesi ${sess}. Fast-Quorum 20 detik aktif!`,
-        reactions: { "⚡": 3 }
-      });
-      selectChannel('xauusd-war-room', document.querySelectorAll('.channel-tab')[0]);
+    function computeEmaSeries(closes, period) {
+      const out = [];
+      if (!closes.length) return out;
+      const k = 2.0 / (period + 1.0);
+      let ema = closes[0];
+      out.push(ema);
+      for (let i = 1; i < closes.length; i++) {
+        ema = closes[i] * k + ema * (1.0 - k);
+        out.push(ema);
+      }
+      return out;
     }
 
     function drawXauChart() {
@@ -761,66 +796,148 @@
       const W = canvas.width, H = canvas.height;
       ctx.clearRect(0, 0, W, H);
 
-      const minP = 3880.0, maxP = 3930.0;
-      const yOf = p => H - ((p - minP) / (maxP - minP)) * (H - 30) - 15;
+      const rawCandles = (liveFeedData && (activeChartTf === 'H1' ? liveFeedData.candles_h1 : liveFeedData.candles_m15)) || [];
+      if (!rawCandles.length) {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '13px Segoe UI';
+        ctx.fillText('Menghubungkan ke feed Native FBS-Demo (terminal64.exe)...', 30, H / 2);
+        return;
+      }
 
-      const yAsiaHigh = yOf(3917.58), yAsiaLow = yOf(3893.58);
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.08)';
-      ctx.fillRect(25, yAsiaHigh, W * 0.44, yAsiaLow - yAsiaHigh);
-      ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
-      ctx.setLineDash([4, 4]);
-      ctx.strokeRect(25, yAsiaHigh, W * 0.44, yAsiaLow - yAsiaHigh);
+      const allCloses = rawCandles.map(c => Number(c.close));
+      const allEma20 = computeEmaSeries(allCloses, 20);
+      const allEma50 = computeEmaSeries(allCloses, 50);
 
-      const drawLevel = (price, color, label) => {
+      const N = Math.min(40, rawCandles.length);
+      const startIdx = rawCandles.length - N;
+      const bars = rawCandles.slice(startIdx);
+      const ema20Slice = allEma20.slice(startIdx);
+      const ema50Slice = allEma50.slice(startIdx);
+
+      const asiaH = Number((liveFeedData && liveFeedData.asian_range_high) || 3914.99);
+      const asiaL = Number((liveFeedData && liveFeedData.asian_range_low) || 3890.99);
+
+      let minP = Math.min(asiaL, 3890.0);
+      let maxP = Math.max(asiaH, 3922.0);
+      for (let i = 0; i < bars.length; i++) {
+        minP = Math.min(minP, Number(bars[i].low), ema20Slice[i], ema50Slice[i]);
+        maxP = Math.max(maxP, Number(bars[i].high), ema20Slice[i], ema50Slice[i]);
+      }
+      const pad = Math.max(2.5, (maxP - minP) * 0.08);
+      minP -= pad;
+      maxP += pad;
+
+      const padLeft = 16, padRight = 150, padTop = 14, padBottom = 38;
+      const chartW = W - padLeft - padRight;
+      const chartH = H - padTop - padBottom;
+      const yOf = p => padTop + ((maxP - p) / (maxP - minP)) * chartH;
+
+      // Grid lines & right price axis
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px Segoe UI';
+      ctx.setLineDash([]);
+      for (let g = 0; g <= 5; g++) {
+        const pVal = minP + ((maxP - minP) * g) / 5.0;
+        const y = yOf(pVal);
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(W - padRight, y);
+        ctx.stroke();
+        ctx.fillText(`$${pVal.toFixed(1)}`, W - padRight + 6, y + 3);
+      }
+
+      // Shaded Rencana A2 Entry Zone ($3,912 - $3,918)
+      const yZTop = yOf(3918.0), yZBot = yOf(3912.0);
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.11)';
+      ctx.fillRect(padLeft, yZTop, chartW, Math.max(2, yZBot - yZTop));
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(padLeft, yZTop, chartW, Math.max(2, yZBot - yZTop));
+
+      // Shaded Trigger Close Band ($3,910 - $3,913)
+      const yTTop = yOf(3913.0), yTBot = yOf(3910.0);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.09)';
+      ctx.fillRect(padLeft, yTTop, chartW, Math.max(2, yTBot - yTTop));
+
+      const drawLevel = (price, color, label, solid = false) => {
+        if (price < minP || price > maxP) return;
         const y = yOf(price);
         ctx.strokeStyle = color;
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = solid ? 1.4 : 1.1;
+        ctx.setLineDash(solid ? [] : [5, 4]);
         ctx.beginPath();
-        ctx.moveTo(25, y);
-        ctx.lineTo(W - 12, y);
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(W - padRight, y);
         ctx.stroke();
         ctx.fillStyle = color;
-        ctx.font = '11px Segoe UI';
-        ctx.fillText(`${label}: $${price.toFixed(2)}`, W - 205, y - 4);
+        ctx.font = 'bold 10px Segoe UI';
+        ctx.fillText(`${label} $${price.toFixed(2)}`, W - padRight + 6, y - 2);
       };
 
-      drawLevel(3926.00, '#f43f5e', 'Hard SL Rencana A');
-      drawLevel(3917.58, '#f59e0b', 'Asian High (>=06:00)');
-      drawLevel(3916.00, '#60a5fa', 'SELL Trigger Rencana A');
-      drawLevel(3899.00, '#38bdf8', 'TP1 (1:1.7R)');
-      drawLevel(3893.58, '#fde68a', 'Asian Low (>=06:00)');
-      drawLevel(3884.00, '#10b981', 'TP2 Final (1:3.2R)');
+      drawLevel(3920.00, '#f43f5e', 'Batal H1 >');
+      drawLevel(asiaH, '#fbbf24', 'Asian High');
+      drawLevel(asiaL, '#fde68a', 'Asian Low');
+      drawLevel(3891.00, '#10b981', 'TP2 Target');
+      drawLevel(liveGoldPrice, '#38bdf8', 'LIVE BID', true);
+
+      // Draw Tick Volume bars at bottom
+      let maxVol = 1;
+      for (const b of bars) maxVol = Math.max(maxVol, Number(b.tick_volume || 1));
+      const stepX = chartW / N;
 
       ctx.setLineDash([]);
-      const candles = [
-        [3894.2, 3896.8, 3893.58, 3895.9],
-        [3895.9, 3901.5, 3895.1, 3899.8],
-        [3899.8, 3902.1, 3897.4, 3900.5],
-        [3900.5, 3904.2, 3899.0, 3902.8],
-        [3902.8, 3903.5, 3896.2, 3897.0],
-        [3897.0, 3914.5, 3896.5, 3913.8],
-        [3913.8, 3917.58, 3906.2, 3909.5],
-        [3909.5, 3916.2, 3908.8, 3913.1],
-        [3913.1, 3915.4, 3907.2, 3911.4],
-        [3911.4, Math.max(3914.0, liveGoldPrice + 0.6), 3909.8, liveGoldPrice]
-      ];
-
-      candles.forEach((c, idx) => {
-        const [o, h, l, cl] = c;
-        const x = 52 + idx * 48;
+      bars.forEach((b, idx) => {
+        const x = padLeft + idx * stepX + stepX * 0.5;
+        const o = Number(b.open), h = Number(b.high), l = Number(b.low), cl = Number(b.close);
         const bull = cl >= o;
+
+        // Tick volume bar
+        const vH = (Number(b.tick_volume || 0) / maxVol) * 24;
+        ctx.fillStyle = bull ? 'rgba(16, 185, 129, 0.22)' : 'rgba(244, 63, 94, 0.22)';
+        ctx.fillRect(x - stepX * 0.3, H - 16 - vH, Math.max(2, stepX * 0.6), vH);
+
+        // Candle wick & body
         ctx.strokeStyle = bull ? '#10b981' : '#f43f5e';
         ctx.fillStyle = bull ? '#10b981' : '#f43f5e';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(x, yOf(h));
         ctx.lineTo(x, yOf(l));
         ctx.stroke();
         const top = yOf(Math.max(o, cl));
         const bot = yOf(Math.min(o, cl));
-        ctx.fillRect(x - 7, top, 14, Math.max(bot - top, 3));
+        const bw = Math.max(3, stepX * 0.58);
+        ctx.fillRect(x - bw / 2, top, bw, Math.max(bot - top, 2));
+
+        // Time axis label every 8 bars (converted to WIB UTC+7)
+        if (idx % 8 === 0 || idx === N - 1) {
+          try {
+            const dt = new Date(new Date(b.timestamp_utc).getTime() + 7 * 3600 * 1000);
+            const hhmm = dt.toISOString().slice(11, 16);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '9.5px Segoe UI';
+            ctx.fillText(hhmm, x - 13, H - 3);
+          } catch (e) {}
+        }
       });
+
+      // Overlay EMA 20 (#f59e0b) & EMA 50 (#c084fc)
+      const drawCurve = (arr, color) => {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.6;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        arr.forEach((val, idx) => {
+          const x = padLeft + idx * stepX + stepX * 0.5;
+          const y = yOf(val);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      };
+      drawCurve(ema20Slice, '#f59e0b');
+      drawCurve(ema50Slice, '#c084fc');
     }
 
     loadState();
