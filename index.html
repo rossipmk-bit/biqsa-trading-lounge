@@ -444,7 +444,7 @@
       <span id="mtfM5" style="background:#162038; padding:2px 7px; border-radius:4px; border:1px solid #233252;">M5: Memuat...</span>
     </div>
     <div id="ismCountdownBar" style="background:rgba(245,158,11,0.14); border:1px solid rgba(245,158,11,0.45); color:#fde68a; padding:3px 9px; border-radius:6px; font-weight:700;">
-      ⏰ USD High-Impact: ISM Manufacturing PMI @ 22:00 WIB • Lockout: 21:45–22:30 • Eksekusi: 22:30–23:30 WIB
+      ⏰ USD High-Impact: ISM Manufacturing PMI @ 22:00 WIB • Lockout: 21:30–22:30 • Eksekusi: 22:30–23:30 WIB
     </div>
   </div>
 
@@ -464,7 +464,7 @@
         <div class="kpi-card">
           <div class="label">Rencana Aktif (Dual-Armed Sesi 3 US)</div>
           <div class="val" id="livePlanTitle" style="font-size:13px; color:#38bdf8;">DUAL-ARMED: OPSI A (SELL) & OPSI B (BUY)</div>
-          <div class="sub" id="livePlanSub">Lockout 21:45–22:30 (ISM) • Aktif 22:30–23:30 WIB (1 Peluru)</div>
+          <div class="sub" id="livePlanSub">Lockout 21:30–22:30 (ISM) • Aktif 22:30–23:30 WIB (1 Peluru)</div>
         </div>
         <div class="kpi-card">
           <div class="label">Ekuitas & Jembatan MT5</div>
@@ -486,7 +486,7 @@
             <span id="badgeUs2a" style="background:rgba(16,185,129,0.2); color:#34d399; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">ARMED • Conf 35%</span>
           </div>
           <div style="color:#e2e8f0;">• <b>Trigger (22:30–23:30):</b> High M15 &ge; <b>$3,940</b> &amp; tutup bearish &lt; <b>$3,940.00</b></div>
-          <div style="color:#94a3b8; margin-top:2px;">• <b>SL:</b> High + $1 (&le;$10) | <b>TP:</b> <span style="color:#34d399; font-weight:700;">$3,920.00</span> (R:R &ge; 1:1.5) | <b>Batal:</b> Close M15 &gt; $3,950</div>
+          <div style="color:#94a3b8; margin-top:2px;">• <b>SL:</b> High + $1 (&le;$10) | <b>TP:</b> <span style="color:#34d399; font-weight:700;">$3,920.00</span> (R:R &ge; 1:1.50) | <b>Batal:</b> Close M15 &gt; $3,950</div>
           <div id="distUs2a" style="color:#fde68a; font-weight:600; margin-top:3px;">Jarak ke Trigger $3,940.00: Menghitung...</div>
         </div>
         <div style="background:linear-gradient(135deg, rgba(16,185,129,0.12), rgba(15,23,42,0.95)); border:1px solid rgba(16,185,129,0.45); border-radius:10px; padding:9px 11px; font-size:11px;">
@@ -494,8 +494,8 @@
             <strong style="color:#34d399; font-size:12px;">🟢 OPSI B: BUY RETEST BREAKOUT (US-2B)</strong>
             <span id="badgeUs2b" style="background:rgba(16,185,129,0.2); color:#34d399; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">ARMED • Conf 30%</span>
           </div>
-          <div style="color:#e2e8f0;">• <b>Trigger (22:30–23:30):</b> Low M15 &le; <b>$3,921</b> &amp; tutup bullish &gt; <b>$3,920.00</b></div>
-          <div style="color:#94a3b8; margin-top:2px;">• <b>SL:</b> <span style="color:#fb7185; font-weight:700;">$3,910.00</span> | <b>TP:</b> <span style="color:#34d399; font-weight:700;">$3,935.00</span> (~1:1.36) | <b>Batal:</b> Close M15 &lt; $3,915</div>
+          <div style="color:#e2e8f0;">• <b>Trigger (22:30–23:30):</b> Low M15 &le; <b>$3,921</b> &amp; tutup bullish di <b>$3,920–$3,925</b></div>
+          <div style="color:#94a3b8; margin-top:2px;">• <b>SL:</b> <span style="color:#fb7185; font-weight:700;">Entry &minus; $10</span> | <b>TP:</b> <span style="color:#34d399; font-weight:700;">Entry + $15</span> (R:R 1:1.50) | <b>Batal:</b> Close M15 &lt; $3,915</div>
           <div id="distUs2b" style="color:#fde68a; font-weight:600; margin-top:3px;">Jarak ke Zona Retest $3,920.00: Menghitung...</div>
         </div>
       </div>
@@ -727,7 +727,7 @@
         if (distBEl) {
           const diffB = liveGoldPrice - 3921.00;
           distBEl.innerHTML = diffB <= 0
-            ? `⚡ Harga DI ZONA RETEST Opsi B ($${liveGoldPrice.toFixed(2)} &le; $3,921.00) • Menunggu M15 tutup bullish &gt; $3,920.00 @ 22:30 WIB`
+            ? `⚡ Harga DI ZONA RETEST Opsi B ($${liveGoldPrice.toFixed(2)} &le; $3,921.00) • Menunggu M15 tutup bullish $3,920–$3,925 @ 22:30 WIB`
             : `📡 Jarak ke Zona BUY Retest $3,921.00: -$${Math.abs(diffB).toFixed(2)} di bawah harga saat ini`;
         }
 
@@ -746,8 +746,8 @@
             const u2 = p.rencana_us2_dual_experiment;
             const invA = u2.opsi_A_sell && u2.opsi_A_sell.invalidated;
             const invB = u2.opsi_B_buy && u2.opsi_B_buy.invalidated;
-            if (ptEl) ptEl.textContent = `DUAL-ARMED: US-2A (SELL 3940) & US-2B (BUY 3920)`;
-            if (psEl) psEl.textContent = `Lockout 21:45–22:30 (ISM) • Eksekusi 22:30–23:30 WIB • Peluru: ${u2.common_rules ? u2.common_rules.quota_used : 0}/1`;
+            if (ptEl) ptEl.textContent = `DUAL-ARMED: US-2A (SELL 3940) & US-2B (BUY 3920–3925)`;
+            if (psEl) psEl.textContent = `Lockout 21:30–22:30 (ISM) • Eksekusi 22:30–23:30 WIB • Peluru: ${u2.common_rules ? u2.common_rules.quota_used : 0}/1`;
             const bA = document.getElementById('badgeUs2a');
             if (bA) {
               bA.textContent = invA ? 'BATAL (Close > $3,950)' : 'ARMED • Conf 35%';
@@ -940,6 +940,9 @@
           const im = String(m.text).match(/<?(https?:\/\/[^\s>|]+\.(?:png|jpg|jpeg|webp)(?:\?[^\s>|]*)?)>?/i);
           if (im) imgUrl = im[1];
         }
+        if (imgUrl && imgUrl.includes('/api/chart/')) {
+          imgUrl = imgUrl.split('/api/chart/').pop().split('?')[0];
+        }
         const imgHtml = imgUrl
           ? `<div style="margin-top:9px;"><img src="${imgUrl}" alt="Visual Analysis Chart" onclick="openVisualModal('${imgUrl}')" style="max-width:100%; max-height:320px; border-radius:10px; border:1.5px solid rgba(245,158,11,0.55); box-shadow:0 4px 18px rgba(0,0,0,0.45); cursor:zoom-in; display:block;" title="Klik untuk memperbesar Visual Chart" /></div>`
           : '';
@@ -1105,6 +1108,7 @@
       ctx.setLineDash([3, 3]);
       ctx.strokeRect(padLeft, yBTop, chartW, Math.max(2, yBBot - yBTop));
 
+      const levelItems = [];
       const drawLevel = (price, color, label, solid = false) => {
         if (price < minP || price > maxP) return;
         const y = yOf(price);
@@ -1115,9 +1119,7 @@
         ctx.moveTo(padLeft, y);
         ctx.lineTo(W - padRight, y);
         ctx.stroke();
-        ctx.fillStyle = color;
-        ctx.font = 'bold 10px Segoe UI';
-        ctx.fillText(`${label} $${price.toFixed(2)}`, W - padRight + 6, y - 2);
+        levelItems.push({ y, price, color, label, solid });
       };
 
       drawLevel(3950.00, '#f43f5e', 'Batal A >');
@@ -1127,6 +1129,17 @@
       drawLevel(3910.00, '#f97316', 'SL Opsi B');
       drawLevel(asiaL, '#fde68a', 'Asian Low');
       drawLevel(liveGoldPrice, '#38bdf8', 'LIVE BID', true);
+
+      // Sort right-axis labels top-to-bottom and enforce minimum 13px vertical spacing to prevent overlap
+      levelItems.sort((a, b) => a.y - b.y);
+      let prevLabelY = -999;
+      for (const item of levelItems) {
+        const ly = Math.max(item.y + 3, prevLabelY + 13);
+        prevLabelY = ly;
+        ctx.fillStyle = item.color;
+        ctx.font = 'bold 10px Segoe UI';
+        ctx.fillText(`${item.label} $${item.price.toFixed(2)}`, W - padRight + 6, ly);
+      }
 
       // Draw Tick Volume bars at bottom
       let maxVol = 1;
