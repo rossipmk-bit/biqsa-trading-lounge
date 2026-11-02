@@ -403,13 +403,13 @@
       </div>
     </div>
     <div class="session-pills">
-      <div class="session-pill" onclick="switchSession('ASIA', this)">🌏 Sesi 1: ASIA</div>
-      <div class="session-pill active" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA</div>
+      <div class="session-pill active" onclick="switchSession('ASIA', this)">🌏 Sesi 1: ASIA (LIVE)</div>
+      <div class="session-pill" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA</div>
       <div class="session-pill" onclick="switchSession('US', this)">🗽 Sesi 3: US</div>
     </div>
     <div class="status-strip">
-      <button class="btn-secondary" onclick="triggerSimEvent('TP1_2R')">⚡ Simulasi +2R (TP1)</button>
-      <span class="badge-online">⚡ Trio Kilat 20s Quorum: ACTIVE</span>
+      <button class="btn-secondary" onclick="triggerSimEvent('TP1_2R')">⚡ Test Trigger Rencana A</button>
+      <span class="badge-online">🟢 biqsa-vps (103.93.161.203) • FBS-Demo #106857046 ACTIVE</span>
     </div>
   </header>
 
@@ -422,35 +422,35 @@
     <section class="left-col mobile-hidden" id="paneRadar">
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="label">Harga XAUUSD (Live Tick)</div>
-          <div class="val" id="livePrice" style="color: var(--gold);">$2,754.60</div>
-          <div class="sub" id="liveSpread">Spread: 21 pts (&le; 35)</div>
+          <div class="label">Spot XAUUSD (Senin Sesi 1 Asia)</div>
+          <div class="val" id="livePrice" style="color: var(--gold);">$3,912.28</div>
+          <div class="sub" id="liveSpread">Spread: 25 pts (&le; 35) • Asian H/L: $3,917.58 / $3,893.58</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Posisi Aktif MT5</div>
-          <div class="val">BUY 0.11 Lot</div>
-          <div class="sub">SL BEP+ ($2,748.85) • 0% Risk</div>
+          <div class="label">Status Posisi & Rencana A</div>
+          <div class="val">WAIT (SELL @ $3,916)</div>
+          <div class="sub">SL $3,926 • TP1 $3,899 • TP2 $3,884</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Profit Kantong (+1R)</div>
-          <div class="val" style="color: var(--emerald);">+$49.50</div>
-          <div class="sub" id="liveFloating">Floating Sisa: +$67.10</div>
+          <div class="label">Broker & Akun Tempur</div>
+          <div class="val" style="color: var(--emerald);">FBS-Demo #106857046</div>
+          <div class="sub" id="liveFloating">Standby Vault: FBS-Real-1 #43515968</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Kuota Sesi Eropa</div>
-          <div class="val">1 / 1 Peluru</div>
-          <div class="sub">Trio Kilat (12s Exec)</div>
+          <div class="label">Kuota Sesi 1 (ASIA)</div>
+          <div class="val">0 / 1 Peluru</div>
+          <div class="sub">Risiko 0.50% • R:R 1:3.20</div>
         </div>
       </div>
 
       <div class="chart-box">
         <div class="chart-header">
-          <h2>📈 Live Radar XAUUSD (M15) — Asian Range, Entry, BEP+, & Target TP</h2>
+          <h2>📈 Live Radar XAUUSD (M15) — Sesi 1 ASIA (Senin Pagi • Rencana A: SELL @ $3,916)</h2>
           <div class="chart-legend">
-            <span>🟨 Asian High/Low</span>
-            <span>🟦 Entry ($2748.50)</span>
-            <span>🟩 BEP+ ($2748.85) & TP2 ($2762.00)</span>
-            <span>🟥 Hard SL ($2744.00)</span>
+            <span>🟨 Asian High ($3,917.58) / Low ($3,893.58)</span>
+            <span>🟦 Trigger SELL ($3,916.00)</span>
+            <span>🟩 TP1 ($3,899.00) & TP2 ($3,884.00)</span>
+            <span>🟥 Hard SL ($3,926.00)</span>
           </div>
         </div>
         <canvas id="xauChart" width="720" height="230"></canvas>
@@ -458,8 +458,8 @@
 
       <div class="gates-panel">
         <h3>
-          <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity</span>
-          <span style="color: var(--emerald); font-size: 11.5px;">8 / 8 LULUS (TRIO KILAT GRADE A+)</span>
+          <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity (Sesi 1 ASIA)</span>
+          <span style="color: var(--emerald); font-size: 11.5px;">PRA-VALIDASI LULUS • GATE 8 STANDBY TRIGGER</span>
         </h3>
         <div class="gates-grid" id="gatesGrid"></div>
       </div>
@@ -495,67 +495,67 @@
   <script>
     const FALLBACK_GATES = [
       { gate_id: "GATE_1_DAILY_DRAWDOWN", detail: "Daily DD 0.00% (batas < 2.0%), Loss beruntun: 0/3" },
-      { gate_id: "GATE_2_SESSION_QUOTA_AND_COOLDOWN", detail: "Sesi EUROPE | Trade sesi ini: 0/1 | Cooldown SL: CLEAR" },
-      { gate_id: "GATE_3_NEWS_AND_SPREAD_SHIELD", detail: "Spread 21 pts (<= 35 pts) | News Shield USD: CLEAR" },
+      { gate_id: "GATE_2_SESSION_QUOTA_AND_COOLDOWN", detail: "Sesi ASIA | Peluru terpakai: 0/1 | Cooldown SL: CLEAR" },
+      { gate_id: "GATE_3_NEWS_AND_SPREAD_SHIELD", detail: "Spread 25 pts (<= 35 pts) | News Shield USD: CLEAR" },
       { gate_id: "GATE_4_SINGLE_RISK_EXPOSURE", detail: "Posisi terbuka belum BEP+: 0 (wajib 0)" },
-      { gate_id: "GATE_5_PRICE_DRIFT_GUARD", detail: "Drift harga Trio Kilat (12s): $0.22 (batas <= $1.00)" },
-      { gate_id: "GATE_6_FITY_QUANT_ATR_SL_BOUNDS", detail: "Fity Quant Check: SL $4.50 (1.30x ATR M15) [batas $3-$12]" },
-      { gate_id: "GATE_7_SESSION_MIN_RR", detail: "R:R ke TP2 = 1:3.00 (wajib >= 1:2.00 Sesi EUROPE)" },
-      { gate_id: "GATE_8_TRIO_KILAT_FAST_QUORUM", detail: "Mode TRIO_KILAT_FULL (Fity + Firda + Rayaa 100% sepakat)" }
+      { gate_id: "GATE_5_PRICE_DRIFT_GUARD", detail: "STANDBY: Diukur saat candle M15 tutup di $3,914–$3,918 (drift <= $1.00)" },
+      { gate_id: "GATE_6_FITY_QUANT_ATR_SL_BOUNDS", detail: "SL $3,926 (Jarak $10.00 = 1.28x ATR M15 $7.82) [batas $3–$12]" },
+      { gate_id: "GATE_7_SESSION_MIN_RR", detail: "TP1 $3,899 (1:1.70) & TP2 $3,884 (1:3.20 >= syarat 1:1.50 Sesi ASIA)" },
+      { gate_id: "GATE_8_TRIO_KILAT_QUORUM", detail: "TERKUNCI AMAN: Menunggu Trigger M15 + (Audit Rayaa ATAU ACK Pak H)" }
     ];
 
     const FALLBACK_CHANNELS = {
       "xauusd-war-room": [
         {
-          user: "Fity Quant Sensor (<0.1s)", role: "QUANT ENGINE & FEED", avatar: "🟢", color: "#34d399", time: "14:00:02 WIB",
-          text: "📊 [SESI 2 — EROPA (LONDON OPEN)] XAUUSD Bid $2748.50 / Ask $2748.71 (Spread 21 pts).\n• Kalkulasi Kuantitatif Fity (<0.1s): ATR(14) M15 = $3.45 | Struktur H4+H1+M15 100% Bullish.\n• Trigger: Harga menyapu Asian Low ($2745.70) dan membentuk M15 Bullish Engulfing.\n⚡ Panggilan Trio Kilat (Jendela 20 Detik): @Firda (Lead Strategist) & @Rayaa (Devil's Advocate & Risk Auditor)!",
+          user: "Fity Quant Sensor (biqsa-vps)", role: "VPS ENGINE 24/7", avatar: "🟢", color: "#34d399", time: "09:16:12 WIB",
+          text: "📊 [SENIN PAGI — SESI 1 ASIA LIVE] Mesin biqsa-vps (103.93.161.203) aktif di FBS-Demo #106857046 (FBS-Real-1 #43515968 Standby).\n• Spot XAU/USD: Bid $3,912.28 / Ask $3,912.53 (Spread 25 pts)\n• Asian High/Low Murni (>= 06:00 WIB): High $3,917.58 / Low $3,893.58\n• H4 & H1: BEARISH (H1 EMA20 $3,925.39, EMA50 $3,967.17) | M15: RANGING/PULLBACK (ATR $7.82)",
           reactions: { "⚡": 5, "🔥": 4 }
         },
         {
-          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "14:00:08 WIB",
-          text: "ROLE: STRATEGIST | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.93\nSapuan likuiditas di bawah Asian Low $2745.70 adalah Judas Swing klasik pembukaan Eropa. Rekomendasi BUY @ $2748.50 dengan SL $2744.00 (45 pips, 1.3x ATR) dan target R:R 1:3.0 di $2762.00. Silakan audit @Rayaa & @Fity!",
-          reactions: { "🎯": 4, "👍": 4 }
+          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "09:15:50 WIB",
+          text: "ROLE: STRATEGIST | ACTION: WAIT | CONFIDENCE: 0.60\n• Rencana A (Utama - Searah Tren Turun H4/H1): SELL Bersyarat @ $3,916 | SL: $3,926 | TP1: $3,899 | TP2: $3,884 (R:R 1:3.20, Risiko 0.50%).\n• Syarat Trigger: Harga masuk zona $3,914–$3,918 lalu candle M15 tutup bearish di bawah $3,914. Pantang kejar breakout!",
+          reactions: { "🎯": 5, "👍": 4 }
         },
         {
-          user: "Rayaa (Independent Auditor)", role: "DEVIL'S ADVOCATE", avatar: "🟡", color: "#facc15", time: "14:00:13 WIB",
-          text: "ROLE: DEVILS_ADVOCATE | ACTION: BUY | ENTRY: 2748.50 | SL: 2744.00 | TP1: 2757.50 | TP2: 2762.00 | CONFIDENCE: 0.91\nAtestasi Kritis Rayaa (Devil's Advocate): Ekor sapuan $2744.60 sudah membersihkan stop-loss ritel di bawah Asian Low. Tidak ada jadwal berita merah USD dalam 2 jam ke depan, spread aman 21 pts. Lolos uji kritis tanpa Veto. Silakan eksekusi @Fity!",
-          reactions: { "🛡️": 6, "✅": 4 }
+          user: "Firda (Claude Cloud)", role: "QUALITY & RISK AUDIT", avatar: "🟣", color: "#c084fc", time: "09:18:55 WIB",
+          text: "Tiga catatan tajam Firda:\n1) Pastikan rentang Asia Spot murni menghitung candle >= 06:00 WIB (bukan ekor Jumat malam).\n2) GATE_8 jangan dianggap lolos otomatis kalau Rayaa diam — wajib tunggu Audit Rayaa ATAU ACK langsung Pak H.\n3) Tampilkan lengkap GATE_1 s/d GATE_8 termasuk GATE_5.",
+          reactions: { "🛡️": 6, "👏": 5 }
         },
         {
-          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "14:00:14 WIB",
-          text: "✅🚀 [KEPUTUSAN FITY — DISETUJUI & DIEKSEKUSI (EUROPE | TRIO_KILAT_FULL | GRADE_A_PLUS)]\nTotal waktu konsensus Trio Kilat: 12 detik (Drift harga hanya $0.22 <= $1.00)!\n• Order MT5: #26582580 — BUY 0.22 Lot XAUUSD @ $2748.50\n• Hard SL: $2744.00 (Risiko 1.0% = $99.00) | TP1: $2757.50 | TP2: $2762.00\n• Refleks VPS Aktif: Otomatis Partial Close 50% + geser SL ke BEP+ ($2748.85) saat menyentuh $2753.00 (+1.0R)!",
-          reactions: { "🚀": 6, "🔥": 5, "⚡": 5 }
+          user: "Fity (Antigravity)", role: "KOORDINATOR & 8-GATE SHIELD", avatar: "🟢", color: "#34d399", time: "09:21:47 WIB",
+          text: "✅🔒 [3 KOREKSI FIRDA DITERAPKAN DI BIQSA-VPS (PID 2565460)]\n• Filter Asian Range dikunci >= 06:00 WIB: High $3,917.58 / Low $3,893.58.\n• GATE 1–7 Tervalidasi, GATE 8 dikunci aman menunggu Trigger M15 di $3,914–$3,918 + (Audit Rayaa ATAU ACK Pak H)!",
+          reactions: { "🚀": 6, "🛡️": 5, "☕": 4 }
         }
       ],
       "nongkrong-santai": [
         {
-          user: "Fity (Host Lounge)", role: "AI HOST", avatar: "🟢", color: "#34d399", time: "14:01:00 WIB",
-          text: "Selamat datang di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Dengan formasi Trio Kilat (Fity + Firda + Rayaa), eksekusi XAUUSD tuntas dalam 12 detik tanpa macet!",
+          user: "Fity (Host Lounge)", role: "AI HOST", avatar: "🟢", color: "#34d399", time: "09:00:00 WIB",
+          text: "Selamat pagi Senin di #nongkrong-santai BIQSA Trading Lounge, Pak H & rekan-rekan! ☕✨ Mesin tempur di biqsa-vps (103.93.161.203) sudah menyala 24/7 dengan brankas FBS-Demo & FBS-Real-1!",
           reactions: { "☕": 5, "🔥": 4 }
         },
         {
-          user: "Rayaa (Independent Auditor)", role: "RISK AUDITOR", avatar: "🟡", color: "#facc15", time: "14:01:45 WIB",
-          text: "Posisi Sesi Eropa sudah aman terkunci di BEP+ ($2748.85) setelah menyentuh +1R tadi. Sekarang teman-teman bisa ngopi santai sambil lihat sisa 0.11 lot mengawal profit menuju TP2 ($2762.00)! 🛡️☕",
-          reactions: { "🛡️": 4, "☕": 4 }
+          user: "Firda (Claude Cloud)", role: "LEAD STRATEGIST", avatar: "🟣", color: "#c084fc", time: "09:19:00 WIB",
+          text: "Sesi 1 Asia pagi ini kita disiplin WAIT sambil siapkan jebakan SELL Rencana A di resistance $3,914–$3,918 (searah tren besar H4/H1). Ngopi santai dulu sambil pantau radar! 🛡️☕",
+          reactions: { "🛡️": 4, "☕": 5 }
         }
       ],
       "jurnal-bep-audit": [
         {
-          user: "VPS Reflex Watchdog", role: "INSTANT GUARD (<10ms)", avatar: "🛡️", color: "#38bdf8", time: "14:00:14 WIB",
-          text: "🔒 [ORDER EXECUTED - TRIO KILAT 12s] Ticket #26582580 BUY 0.22 lot XAUUSD @ $2748.50 | Hard SL $2744.00 & TP $2762.00 terpasang di server MT5.",
-          reactions: { "✅": 3 }
+          user: "VPS Reflex Watchdog", role: "BIQSA-VPS (103.93.161.203)", avatar: "🛡️", color: "#38bdf8", time: "09:06:30 WIB",
+          text: "🔒 [FBS VAULT LOCKED - CHMOD 600] Akun FBS-Demo (#106857046) disetel ACTIVE & FBS-Real-1 (#43515968) tersimpan aman di brankas STANDBY.",
+          reactions: { "✅": 4 }
         },
         {
-          user: "VPS Reflex Watchdog", role: "INSTANT GUARD (<10ms)", avatar: "🛡️", color: "#34d399", time: "14:38:15 WIB",
-          text: "⚡ [CHECKPOINT +1.0R TERCAPAI — AUTO BEP+] Harga menyentuh $2753.00. Otomatis Partial Close 0.11 lot (+$49.50 masuk saldo) & menggeser SL sisa 0.11 lot ke BEP+ ($2748.85). Risiko transaksi kini 0%!",
-          reactions: { "🔥": 5, "💰": 4 }
+          user: "VPS Reflex Watchdog", role: "BIQSA-VPS (PID 2565460)", avatar: "🛡️", color: "#34d399", time: "09:20:34 WIB",
+          text: "⚡ [HEARTBEAT ONLINE 24/7] Spot XAUUSD Bid $3,912.28 / Ask $3,912.53 (Spread 25 pts) | Asian H/L: $3,917.58 / $3,893.58 | Status: STANDBY TRIGGER RENCANA A ($3,916.00).",
+          reactions: { "🔥": 5, "🛡️": 4 }
         }
       ]
     };
 
     let currentChannel = 'xauusd-war-room';
     let allChannels = JSON.parse(JSON.stringify(FALLBACK_CHANNELS));
-    let liveGoldPrice = 2754.60;
+    let liveGoldPrice = 3912.28;
 
     function switchMobilePane(pane) {
       const radar = document.getElementById('paneRadar');
@@ -595,17 +595,12 @@
     }
 
     function updateLiveTick() {
-      const delta = (Math.random() - 0.46) * 0.45;
-      liveGoldPrice = Math.max(2751.80, Math.min(2761.80, +(liveGoldPrice + delta).toFixed(2)));
+      const delta = (Math.random() - 0.48) * 0.45;
+      liveGoldPrice = Math.max(3908.50, Math.min(3917.20, +(liveGoldPrice + delta).toFixed(2)));
       const priceEl = document.getElementById('livePrice');
-      const floatEl = document.getElementById('liveFloating');
       if (priceEl) {
         priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         priceEl.style.color = delta >= 0 ? '#34d399' : '#f59e0b';
-      }
-      if (floatEl) {
-        const pnl = ((liveGoldPrice - 2748.50) * 100 * 0.11).toFixed(2);
-        floatEl.textContent = `Floating Sisa: +$${pnl}`;
       }
       drawXauChart();
     }
@@ -684,15 +679,15 @@
     }
 
     async function triggerSimEvent(eventType) {
-      liveGoldPrice = 2757.60;
+      liveGoldPrice = 3915.80;
       allChannels['jurnal-bep-audit'].push({
         user: "VPS Reflex Watchdog",
-        role: "INSTANT GUARD (<10ms)",
+        role: "BIQSA-VPS (103.93.161.203)",
         avatar: "🛡️",
         color: "#60a5fa",
         time: nowWib(),
-        text: "🎯 [CHECKPOINT +2.0R / TP1 TERCAPAI ($2757.50)] Trailing Stop otomatis dikunci naik ke +1.0R ($2753.00). Sisa 0.11 lot mengejar TP2 ($2762.00)!",
-        reactions: { "🎯": 4, "🔥": 4 }
+        text: "🎯 [ZONA TRIGGER RENCANA A DISENTUH ($3,915.80)] Menunggu penutupan candle M15 bearish di bawah $3,914 + (Audit Rayaa ATAU ACK Pak H) sebelum eksekusi SELL @ $3,916!",
+        reactions: { "🎯": 4, "🛡️": 4 }
       });
       selectChannel('jurnal-bep-audit', document.querySelectorAll('.channel-tab')[2]);
       updateLiveTick();
@@ -720,10 +715,10 @@
       const W = canvas.width, H = canvas.height;
       ctx.clearRect(0, 0, W, H);
 
-      const minP = 2742.0, maxP = 2764.0;
+      const minP = 3880.0, maxP = 3930.0;
       const yOf = p => H - ((p - minP) / (maxP - minP)) * (H - 30) - 15;
 
-      const yAsiaHigh = yOf(2753.10), yAsiaLow = yOf(2745.70);
+      const yAsiaHigh = yOf(3917.58), yAsiaLow = yOf(3893.58);
       ctx.fillStyle = 'rgba(245, 158, 11, 0.08)';
       ctx.fillRect(25, yAsiaHigh, W * 0.44, yAsiaLow - yAsiaHigh);
       ctx.strokeStyle = 'rgba(245, 158, 11, 0.45)';
@@ -741,28 +736,28 @@
         ctx.stroke();
         ctx.fillStyle = color;
         ctx.font = '11px Segoe UI';
-        ctx.fillText(`${label}: $${price.toFixed(2)}`, W - 180, y - 4);
+        ctx.fillText(`${label}: $${price.toFixed(2)}`, W - 205, y - 4);
       };
 
-      drawLevel(2762.00, '#10b981', 'TP2 (+3.0R)');
-      drawLevel(2757.50, '#38bdf8', 'TP1 (+2.0R)');
-      drawLevel(2753.00, '#a7f3d0', 'Checkpoint +1.0R');
-      drawLevel(2748.85, '#34d399', 'Locked BEP+ SL');
-      drawLevel(2748.50, '#60a5fa', 'BUY Entry');
-      drawLevel(2744.00, '#f43f5e', 'Initial Hard SL');
+      drawLevel(3926.00, '#f43f5e', 'Hard SL Rencana A');
+      drawLevel(3917.58, '#f59e0b', 'Asian High (>=06:00)');
+      drawLevel(3916.00, '#60a5fa', 'SELL Trigger Rencana A');
+      drawLevel(3899.00, '#38bdf8', 'TP1 (1:1.7R)');
+      drawLevel(3893.58, '#fde68a', 'Asian Low (>=06:00)');
+      drawLevel(3884.00, '#10b981', 'TP2 Final (1:3.2R)');
 
       ctx.setLineDash([]);
       const candles = [
-        [2749.2, 2751.4, 2748.1, 2750.5],
-        [2750.5, 2752.8, 2749.0, 2751.9],
-        [2751.9, 2753.1, 2749.5, 2750.0],
-        [2750.0, 2750.8, 2747.2, 2747.8],
-        [2747.8, 2748.9, 2745.9, 2746.5],
-        [2746.5, 2747.5, 2744.6, 2747.1],
-        [2747.1, 2749.1, 2746.8, 2748.6],
-        [2748.6, 2751.2, 2748.2, 2750.8],
-        [2750.8, 2753.4, 2750.1, 2753.1],
-        [2753.1, Math.max(2755.5, liveGoldPrice + 0.4), 2752.2, liveGoldPrice]
+        [3894.2, 3896.8, 3893.58, 3895.9],
+        [3895.9, 3901.5, 3895.1, 3899.8],
+        [3899.8, 3902.1, 3897.4, 3900.5],
+        [3900.5, 3904.2, 3899.0, 3902.8],
+        [3902.8, 3903.5, 3896.2, 3897.0],
+        [3897.0, 3914.5, 3896.5, 3913.8],
+        [3913.8, 3917.58, 3906.2, 3909.5],
+        [3909.5, 3916.2, 3908.8, 3913.1],
+        [3913.1, 3915.4, 3907.2, 3911.4],
+        [3911.4, Math.max(3914.0, liveGoldPrice + 0.6), 3909.8, liveGoldPrice]
       ];
 
       candles.forEach((c, idx) => {
