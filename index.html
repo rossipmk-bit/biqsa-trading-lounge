@@ -642,7 +642,7 @@
       } catch (e) {}
     }
 
-    async function syncFromCloudflareEdge() {
+    async function syncFromCloudflareEdge(forceBottom = false) {
       try {
         const res = await fetch(`${EDGE_API_BASE}/api/state`);
         if (res.ok) {
@@ -662,7 +662,7 @@
           }
         }
       } catch (e) {}
-      renderMessages();
+      renderMessages(forceBottom);
     }
 
     async function loadState() {
@@ -672,10 +672,10 @@
         if (nickEl) nickEl.value = savedNick;
       }
       renderGates(FALLBACK_GATES);
-      renderMessages();
-      await Promise.all([syncNativeFbsFeed(), syncFromCloudflareEdge()]);
+      renderMessages(true);
+      await Promise.all([syncNativeFbsFeed(), syncFromCloudflareEdge(true)]);
       setInterval(syncNativeFbsFeed, 3000);
-      setInterval(syncFromCloudflareEdge, 5000);
+      setInterval(() => syncFromCloudflareEdge(false), 5000);
     }
 
     function renderGates(gates) {
@@ -709,12 +709,23 @@
           badge.textContent = '🔒 READ-ONLY MIRROR (#biqsa-trading Steril)';
         }
       }
-      renderMessages();
+      renderMessages(true);
     }
 
-    function renderMessages() {
+    function renderMessages(forceBottom = false) {
       const stream = document.getElementById('chatStream');
+      if (!stream) return;
       const list = allChannels[currentChannel] || [];
+      const sig = currentChannel + ':' + list.map(m => (m.id || m.time) + '|' + m.text).join(';;');
+      const isNearBottom = (stream.scrollHeight - stream.scrollTop - stream.clientHeight) <= 75;
+      const prevScrollTop = stream.scrollTop;
+
+      if (stream.dataset.lastSig === sig) {
+        if (forceBottom) stream.scrollTop = stream.scrollHeight;
+        return;
+      }
+      stream.dataset.lastSig = sig;
+
       stream.innerHTML = list.map(m => {
         const reacts = Object.entries(m.reactions || {}).map(([k, v]) => `<span class="react-pill">${k} ${v}</span>`).join('');
         return `
@@ -732,7 +743,12 @@
           </div>
         `;
       }).join('');
-      stream.scrollTop = stream.scrollHeight;
+
+      if (forceBottom || isNearBottom) {
+        stream.scrollTop = stream.scrollHeight;
+      } else {
+        stream.scrollTop = prevScrollTop;
+      }
     }
 
     function nowWib() {
@@ -768,7 +784,7 @@
         text,
         reactions: { "☕": 1 }
       });
-      renderMessages();
+      renderMessages(true);
 
       try {
         const postUrl = isFounderWarRoom ? `${EDGE_API_BASE}/api/chat` : `${NONGKRONG_API_BASE}/api/nongkrong/chat`;
@@ -778,7 +794,7 @@
           body: JSON.stringify({ user, text, channel: targetCh, pin })
         });
         if (res.ok) {
-          setTimeout(syncFromCloudflareEdge, 800);
+          setTimeout(() => syncFromCloudflareEdge(true), 800);
         }
       } catch (e) {}
     }
