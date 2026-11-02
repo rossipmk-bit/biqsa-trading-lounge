@@ -403,8 +403,8 @@
       </div>
     </div>
     <div class="session-pills">
-      <div class="session-pill active" onclick="switchSession('ASIA', this)">🌏 Sesi 1: ASIA (LIVE)</div>
-      <div class="session-pill" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA</div>
+      <div class="session-pill" onclick="switchSession('ASIA', this)">🌏 Sesi 1: ASIA (DONE)</div>
+      <div class="session-pill active" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA (LIVE)</div>
       <div class="session-pill" onclick="switchSession('US', this)">🗽 Sesi 3: US</div>
     </div>
     <div class="status-strip">
@@ -423,14 +423,14 @@
     <section class="left-col mobile-hidden" id="paneRadar">
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="label" id="kpiSessionLabel">XAUUSD Native FBS-Demo (Sesi ASIA)</div>
+          <div class="label" id="kpiSessionLabel">XAUUSD Native FBS-Demo (Sesi 2 LONDON)</div>
           <div class="val" id="livePrice" style="color: var(--gold);">Memuat...</div>
           <div class="sub" id="liveSpread">Menghubungkan ke terminal64.exe...</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Rencana Aktif (Alur #2 Firda)</div>
-          <div class="val" id="livePlanTitle" style="font-size:14.5px; color:#38bdf8;">RENCANA A2 (SELL ASIA HIGH)</div>
-          <div class="sub" id="livePlanSub">Zona $3,912–$3,918 • Close M15 $3,910–$3,913</div>
+          <div class="label">Rencana Aktif (Alur #2 Firda — Sesi 2)</div>
+          <div class="val" id="livePlanTitle" style="font-size:13.5px; color:#38bdf8;">SESI 2: L1 (ASIA HIGH) / L2 (BREAK)</div>
+          <div class="sub" id="livePlanSub">L1 High &ge; $3,915 (Conf 0.55) • L2 Close &lt; $3,889 (Conf 0.45)</div>
         </div>
         <div class="kpi-card">
           <div class="label">Ekuitas & Jembatan MT5</div>
@@ -440,19 +440,19 @@
         <div class="kpi-card">
           <div class="label">Ukuran Lot & Risiko (Demo 2 Hari)</div>
           <div class="val" id="liveLotInfo">0.01 Lot ($10 / 1.0%)</div>
-          <div class="sub" id="liveRrInfo">SL +$10 • TP1 -$15 (1:1.5) • TP2 $3,891</div>
+          <div class="sub" id="liveRrInfo">Order TP=TP2 ($3,891 / $3,871) • Auto-BEP +$1 @ TP1 (-$15)</div>
         </div>
       </div>
 
       <div class="chart-box">
         <div class="chart-header">
-          <h2 id="chartTitle">📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Rencana A2)</h2>
+          <h2 id="chartTitle">📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Sesi 2 L1/L2)</h2>
           <div class="chart-legend">
             <span style="color:#f59e0b;">━━ EMA 20</span>
             <span style="color:#c084fc;">━━ EMA 50</span>
-            <span style="color:#38bdf8;">🟦 Zona Sell A2 ($3,912–$3,918)</span>
-            <span style="color:#fbbf24;">🟨 Asian H/L</span>
-            <span style="color:#10b981;">🟩 Target TP2 ($3,891)</span>
+            <span style="color:#38bdf8;">🟦 Zona L1 (&ge;$3,915) / L2 (&lt;$3,889)</span>
+            <span style="color:#fbbf24;">🟨 Asian H/L ($3,919.20 / $3,890.99)</span>
+            <span style="color:#10b981;">🟩 Target TP2 ($3,891 / $3,871)</span>
           </div>
         </div>
         <canvas id="xauChart" width="760" height="270" style="height:270px;"></canvas>
@@ -460,8 +460,8 @@
 
       <div class="gates-panel">
         <h3>
-          <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity (Sesi 1 ASIA)</span>
-          <span style="color: var(--emerald); font-size: 11.5px;">PRA-VALIDASI LULUS • GATE 8 STANDBY TRIGGER</span>
+          <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity (Sesi 2 LONDON / EROPA)</span>
+          <span style="color: var(--emerald); font-size: 11.5px;">SPREAD &le; 40 PTS • L1 &amp; L2 ARMED S/D 19:00 WIB</span>
         </h3>
         <div class="gates-grid" id="gatesGrid"></div>
       </div>
@@ -562,11 +562,11 @@
       if (tf === 'M15') {
         if (b15) { b15.style.borderColor = 'var(--gold)'; b15.style.color = '#fde68a'; }
         if (bH1) { bH1.style.borderColor = 'var(--border)'; bH1.style.color = '#e2e8f0'; }
-        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Rencana A2)';
+        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Sesi 2 L1/L2)';
       } else {
         if (bH1) { bH1.style.borderColor = 'var(--gold)'; bH1.style.color = '#fde68a'; }
         if (b15) { b15.style.borderColor = 'var(--border)'; b15.style.color = '#e2e8f0'; }
-        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (H1 — 40 Bar Terakhir + EMA20/50 + Rencana A2)';
+        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (H1 — 40 Bar Terakhir + EMA20/50 + Sesi 2 L1/L2)';
       }
       drawXauChart();
     }
@@ -607,12 +607,12 @@
         }
         const spreadEl = document.getElementById('liveSpread');
         if (spreadEl) {
-          const spOk = Number(d.spread_points) <= 35;
-          spreadEl.innerHTML = `<span style="color:${spOk ? '#34d399' : '#f43f5e'}">Spread: ${d.spread_points} pts (${spOk ? '&le; 35 OK' : '&gt; 35 HOLD'})</span> • Asia H/L: $${Number(d.asian_range_high).toFixed(2)} / $${Number(d.asian_range_low).toFixed(2)}`;
+          const spOk = Number(d.spread_points) <= 40;
+          spreadEl.innerHTML = `<span style="color:${spOk ? '#34d399' : '#f43f5e'}">Spread: ${d.spread_points} pts (${spOk ? '&le; 40 OK' : '&gt; 40 HOLD'})</span> • Asia H/L: $${Number(d.asian_range_high).toFixed(2)} / $${Number(d.asian_range_low).toFixed(2)}`;
         }
         const sessEl = document.getElementById('kpiSessionLabel');
         if (sessEl) {
-          sessEl.textContent = `XAUUSD Native FBS-Demo (Sesi ${d.session_code || 'ASIA'} • ${d.timestamp_wib ? d.timestamp_wib.slice(11) : ''})`;
+          sessEl.textContent = `XAUUSD Native FBS-Demo (Sesi ${d.session_code || 'LONDON'} • ${d.timestamp_wib ? d.timestamp_wib.slice(11) : ''})`;
         }
         if (d.mt5_execution_bridge) {
           const b = d.mt5_execution_bridge;
@@ -624,9 +624,9 @@
         if (d.standing_ack_gate8) {
           const p = d.standing_ack_gate8;
           const ptEl = document.getElementById('livePlanTitle');
-          if (ptEl) ptEl.textContent = `${p.active_plan || 'RENCANA_A2_SELL_ASIA_HIGH'}`;
+          if (ptEl) ptEl.textContent = `SESI 2: L1 (ASIA HIGH) / L2 (LOW BREAK)`;
           const psEl = document.getElementById('livePlanSub');
-          if (psEl) psEl.textContent = `Zona $3,912–$3,918 • Close M15 $3,910–$3,913 (Batas 13:30 WIB)`;
+          if (psEl) psEl.textContent = `L1 High \u2265 $3,915 (0.55) \u2022 L2 Close < $3,889 (0.45) \u2022 s/d 19:00 WIB`;
         }
         if (d.gates) {
           const gArr = Object.entries(d.gates).map(([k, v]) => ({
