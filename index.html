@@ -493,6 +493,7 @@
 
   <script>
     const EDGE_API_BASE = "https://biqsa-trading-lounge.rossipmk.workers.dev";
+    const NONGKRONG_API_BASE = "https://biqsa-nongkrong-santai.rossipmk.workers.dev";
     const FALLBACK_GATES = [
       { gate_id: "GATE_1_DAILY_DRAWDOWN", detail: "Daily DD 0.00% (batas < 2.0%), Loss beruntun: 0/3" },
       { gate_id: "GATE_2_SESSION_QUOTA_AND_COOLDOWN", detail: "Sesi ASIA | Peluru terpakai: 0/1 | Cooldown SL: CLEAR" },
@@ -647,11 +648,21 @@
         if (res.ok) {
           const data = await res.json();
           if (data.ok && data.channels) {
-            allChannels = data.channels;
-            renderMessages();
+            if (data.channels['xauusd-war-room']) allChannels['xauusd-war-room'] = data.channels['xauusd-war-room'];
+            if (data.channels['jurnal-bep-audit']) allChannels['jurnal-bep-audit'] = data.channels['jurnal-bep-audit'];
           }
         }
       } catch (e) {}
+      try {
+        const nRes = await fetch(`${NONGKRONG_API_BASE}/api/nongkrong/state`);
+        if (nRes.ok) {
+          const nData = await nRes.json();
+          if (nData.ok && nData.hangoutChat) {
+            allChannels['nongkrong-santai'] = nData.hangoutChat;
+          }
+        }
+      } catch (e) {}
+      renderMessages();
     }
 
     async function loadState() {
@@ -760,18 +771,14 @@
       renderMessages();
 
       try {
-        const res = await fetch(`${EDGE_API_BASE}/api/chat`, {
+        const postUrl = isFounderWarRoom ? `${EDGE_API_BASE}/api/chat` : `${NONGKRONG_API_BASE}/api/nongkrong/chat`;
+        const res = await fetch(postUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user, text, channel: targetCh, pin })
         });
         if (res.ok) {
-          const data = await res.json();
-          if (data.ok) {
-            if (data.hangoutChat) allChannels['nongkrong-santai'] = data.hangoutChat;
-            if (data.warRoomMirror) allChannels['xauusd-war-room'] = data.warRoomMirror;
-            renderMessages();
-          }
+          setTimeout(syncFromCloudflareEdge, 800);
         }
       } catch (e) {}
     }
