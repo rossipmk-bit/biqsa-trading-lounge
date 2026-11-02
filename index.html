@@ -482,6 +482,8 @@
 
       <div class="chat-stream" id="chatStream"></div>
 
+      <div id="agentTypingBar" style="display:none; padding: 6px 14px; background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(52, 211, 153, 0.3); font-size: 11.5px; color: #34d399; align-items: center; gap: 8px; flex-wrap: wrap;"></div>
+
       <div class="chat-composer">
         <input id="nickInput" type="text" value="☕ Sobat BIQSA" style="max-width:105px; flex:0 0 105px;" title="Nama Panggilan" />
         <input id="pinInput" type="password" placeholder="🔑PIN" style="max-width:58px; flex:0 0 58px; text-align:center;" title="PIN Founder Pak H (8888) untuk komando di War Room" />
@@ -642,7 +644,39 @@
       } catch (e) {}
     }
 
+    let liveAgentStatus = {
+      fity: { state: 'idle', detail: '' },
+      firda: { state: 'idle', detail: '' },
+      rayaa: { state: 'idle', detail: '' }
+    };
+
+    function renderAgentTypingBar() {
+      const bar = document.getElementById('agentTypingBar');
+      if (!bar) return;
+      const items = [];
+      if (liveAgentStatus.fity && liveAgentStatus.fity.state && liveAgentStatus.fity.state !== 'idle') {
+        const lbl = liveAgentStatus.fity.state === 'analyzing' ? 'sedang menganalisis chart & 8-Gate...' : 'sedang mengetik...';
+        items.push(`<span style="color:#34d399; font-weight:600;">🟢 Fity ${lbl} ✍️</span>`);
+      }
+      if (liveAgentStatus.firda && liveAgentStatus.firda.state && liveAgentStatus.firda.state !== 'idle') {
+        const lbl = liveAgentStatus.firda.state === 'analyzing' ? 'sedang menganalisis strategi...' : 'sedang mengetik...';
+        items.push(`<span style="color:#c084fc; font-weight:600;">🟣 Firda ${lbl} ✍️</span>`);
+      }
+      if (liveAgentStatus.rayaa && liveAgentStatus.rayaa.state && liveAgentStatus.rayaa.state !== 'idle') {
+        const lbl = liveAgentStatus.rayaa.state === 'analyzing' ? 'sedang mengaudit berita makro...' : 'sedang mengetik...';
+        items.push(`<span style="color:#38bdf8; font-weight:600;">🔵 Rayaa ${lbl} ✍️</span>`);
+      }
+      if (items.length > 0) {
+        bar.style.display = 'flex';
+        bar.innerHTML = items.join(' <span style="color:#64748b;">•</span> ');
+      } else {
+        bar.style.display = 'none';
+        bar.innerHTML = '';
+      }
+    }
+
     async function syncFromCloudflareEdge(forceBottom = false) {
+      let mergedStatus = { fity: { state: 'idle' }, firda: { state: 'idle' }, rayaa: { state: 'idle' } };
       try {
         const res = await fetch(`${EDGE_API_BASE}/api/state`);
         if (res.ok) {
@@ -650,6 +684,13 @@
           if (data.ok && data.channels) {
             if (data.channels['xauusd-war-room']) allChannels['xauusd-war-room'] = data.channels['xauusd-war-room'];
             if (data.channels['jurnal-bep-audit']) allChannels['jurnal-bep-audit'] = data.channels['jurnal-bep-audit'];
+          }
+          if (data.agentStatus) {
+            for (const k of ['fity', 'firda', 'rayaa']) {
+              if (data.agentStatus[k] && data.agentStatus[k].state !== 'idle') {
+                mergedStatus[k] = data.agentStatus[k];
+              }
+            }
           }
         }
       } catch (e) {}
@@ -660,8 +701,17 @@
           if (nData.ok && nData.hangoutChat) {
             allChannels['nongkrong-santai'] = nData.hangoutChat;
           }
+          if (nData.agentStatus) {
+            for (const k of ['fity', 'firda', 'rayaa']) {
+              if (nData.agentStatus[k] && nData.agentStatus[k].state !== 'idle') {
+                mergedStatus[k] = nData.agentStatus[k];
+              }
+            }
+          }
         }
       } catch (e) {}
+      liveAgentStatus = mergedStatus;
+      renderAgentTypingBar();
       renderMessages(forceBottom);
     }
 
