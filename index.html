@@ -895,6 +895,17 @@
     }
 
     async function loadState() {
+      // Support 1-click magic link from Pak H's private Telegram (#founder_key=...)
+      if (window.location.hash && window.location.hash.includes('founder_key=')) {
+        const match = window.location.hash.match(/founder_key=([^&]+)/);
+        if (match && match[1]) {
+          const magicKey = decodeURIComponent(match[1]).trim();
+          localStorage.setItem('biqsa_founder_pin', magicKey);
+          try {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+          } catch (e) {}
+        }
+      }
       const savedNick = localStorage.getItem('biqsa_lounge_nick');
       if (savedNick) {
         const nickEl = document.getElementById('nickInput');
@@ -1070,12 +1081,17 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user, text, channel: targetCh, pin })
         });
+        if (res.status === 429) {
+          input.value = text;
+          alert('🚨 Terlalu banyak percobaan salah (maks 5x / 10 menit). Silakan gunakan Tautan 1-Klik di Telegram @Biqsa_Trading_bot.');
+          return;
+        }
         if (res.status === 403) {
           input.value = text;
           localStorage.removeItem('biqsa_founder_pin');
           if (pinEl) pinEl.value = '';
           updateComposerModeBadge();
-          alert('🔒 Kunci Otorisasi Founder tidak cocok (gunakan 9724 atau 8888). Pesan Anda masih utuh di kotak ketik.');
+          alert('🔒 Kunci Otorisasi Founder 24-karakter diperlukan untuk War Room (silakan klik Tautan 1-Klik di Telegram @Biqsa_Trading_bot atau gunakan tab #☕-nongkrong-santai).');
           return;
         }
         allChannels[targetCh].push({
