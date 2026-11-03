@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>BIQSA Trading Command & Lounge — XAUUSD (Cara Fity V3 Trio Kilat)</title>
+  <title>BIQSA Enterprise Trading & Lounge — XAUUSD</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg" />
+  <link rel="apple-touch-icon" href="logo.jpg" />
   <style>
     :root {
       --bg-dark: #070b14;
@@ -21,7 +23,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', system-ui, -apple-system, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
       background: var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
@@ -41,7 +43,22 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 11px;
+    }
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 11px;
+      object-fit: cover;
+      border: 1.5px solid rgba(245, 158, 11, 0.85);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      flex-shrink: 0;
+    }
+    .brand-logo:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 26px rgba(245, 158, 11, 0.85);
     }
     .brand-badge {
       background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -338,8 +355,17 @@
       background: var(--bg-panel);
       border-top: 1px solid var(--border);
       display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: sticky;
+      bottom: 0;
+      z-index: 25;
+    }
+    .chat-composer-row {
+      display: flex;
       gap: 6px;
       align-items: center;
+      width: 100%;
     }
     .chat-composer select {
       background: var(--bg-card);
@@ -396,41 +422,58 @@
 <body>
   <header>
     <div class="brand">
+      <img src="logo.jpg" alt="BIQSA Enterprise Gold Emblem" class="brand-logo" onclick="openLogoModal()" title="Klik untuk memperbesar Lambang Resmi BIQSA Enterprise" />
       <div class="brand-badge">XAUUSD</div>
       <div class="brand-title">
-        <h1>BIQSA TRADING & LOUNGE</h1>
+        <h1>BIQSA ENTERPRISE • TRADING & LOUNGE</h1>
         <p>Cara Fity V3 • Trio Kilat (Fity + Firda + Rayaa) • 3 Sesi</p>
       </div>
     </div>
     <div class="session-pills">
       <div class="session-pill" onclick="switchSession('ASIA', this)">🌏 Sesi 1: ASIA (DONE)</div>
-      <div class="session-pill active" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA (LIVE)</div>
-      <div class="session-pill" onclick="switchSession('US', this)">🗽 Sesi 3: US</div>
+      <div class="session-pill" onclick="switchSession('EUROPE', this)">🏛️ Sesi 2: EROPA (DONE)</div>
+      <div class="session-pill active" onclick="switchSession('US', this)">🗽 Sesi 3: US (LIVE)</div>
     </div>
     <div class="status-strip">
       <button class="btn-secondary" id="tfM15Btn" style="border-color:var(--gold); color:#fde68a;" onclick="switchChartTf('M15')">📊 Chart M15 (FBS Live)</button>
       <button class="btn-secondary" id="tfH1Btn" onclick="switchChartTf('H1')">📊 Chart H1 (FBS Live)</button>
+      <button class="btn-secondary" id="proModeBtn" style="border-color:#38bdf8; color:#38bdf8;" onclick="toggleProTerminalMode()">🖥️ Mode Pro Trader</button>
       <span class="badge-online" id="mt5BridgeBadge">🟢 biqsa-vps • FBS-Demo Native MT5 IPC (Build 6295) LIVE</span>
     </div>
   </header>
 
-  <div class="mobile-nav">
-    <button id="tabLoungeBtn" class="active" onclick="switchMobilePane('lounge')">💬 Lounge Nongkrong & AI</button>
-    <button id="tabRadarBtn" onclick="switchMobilePane('radar')">📈 Chart FBS Live & 8-Gate</button>
+  <!-- Bar Indikator Multi-Timeframe & Hitung Mundur Kalender Ekonomi Wall Street -->
+  <div id="proTickerBar" style="background:#09101f; border-bottom:1px solid var(--border); padding:7px 14px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; font-size:11px;">
+    <div id="mtfMatrixBar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+      <span style="color:#fde68a; font-weight:700;">📡 RADAR MULTI-TF:</span>
+      <span id="mtfD1" style="background:#162038; padding:2px 7px; border-radius:4px; border:1px solid #233252;">D1: Memuat...</span>
+      <span id="mtfH4" style="background:#162038; padding:2px 7px; border-radius:4px; border:1px solid #233252;">H4: Memuat...</span>
+      <span id="mtfH1" style="background:#162038; padding:2px 7px; border-radius:4px; border:1px solid #233252;">H1: Memuat...</span>
+      <span id="mtfM15" style="background:#162038; padding:2px 7px; border-radius:4px; border:1px solid #233252;">M15: Memuat...</span>
+      <span id="mtfM5" style="background:#162038; padding:2px 7px; border-radius:4px; border:1px solid #233252;">M5: Memuat...</span>
+    </div>
+    <div id="ismCountdownBar" style="background:rgba(245,158,11,0.14); border:1px solid rgba(245,158,11,0.45); color:#fde68a; padding:3px 9px; border-radius:6px; font-weight:700;">
+      ⏰ USD High-Impact: ISM Manufacturing PMI @ 22:00 WIB • Lockout: 21:30–22:30 • Eksekusi: 22:30–23:30 WIB
+    </div>
   </div>
 
-  <main>
-    <section class="left-col mobile-hidden" id="paneRadar">
+  <div class="mobile-nav">
+    <button id="tabRadarBtn" class="active" onclick="switchMobilePane('radar')">📈 Terminal Pro Trader & Chart</button>
+    <button id="tabLoungeBtn" onclick="switchMobilePane('lounge')">💬 War Room & Lounge AI</button>
+  </div>
+
+  <main id="mainGrid">
+    <section class="left-col" id="paneRadar">
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="label" id="kpiSessionLabel">XAUUSD Native FBS-Demo (Sesi 2 LONDON)</div>
+          <div class="label" id="kpiSessionLabel">XAUUSD Native FBS-Demo (Sesi 3 US)</div>
           <div class="val" id="livePrice" style="color: var(--gold);">Memuat...</div>
           <div class="sub" id="liveSpread">Menghubungkan ke terminal64.exe...</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Rencana Aktif (Alur #2 Firda — Sesi 2)</div>
-          <div class="val" id="livePlanTitle" style="font-size:13.5px; color:#38bdf8;">SESI 2: L1 (ASIA HIGH) / L2 (BREAK)</div>
-          <div class="sub" id="livePlanSub">L1 High &ge; $3,915 (Conf 0.55) • L2 Close &lt; $3,889 (Conf 0.45)</div>
+          <div class="label">Rencana Aktif (Dual-Armed Sesi 3 US)</div>
+          <div class="val" id="livePlanTitle" style="font-size:13px; color:#38bdf8;">DUAL-ARMED: OPSI A (SELL) & OPSI B (BUY)</div>
+          <div class="sub" id="livePlanSub">Lockout 21:30–22:30 (ISM) • Aktif 22:30–23:30 WIB (1 Peluru)</div>
         </div>
         <div class="kpi-card">
           <div class="label">Ekuitas & Jembatan MT5</div>
@@ -438,36 +481,58 @@
           <div class="sub" id="liveFloating">AlgoTrading: ON • Real Vault: STANDBY</div>
         </div>
         <div class="kpi-card">
-          <div class="label">Ukuran Lot & Risiko (Demo 2 Hari)</div>
-          <div class="val" id="liveLotInfo">0.01 Lot ($10 / 1.0%)</div>
-          <div class="sub" id="liveRrInfo">Order TP=TP2 ($3,891 / $3,871) • Auto-BEP +$1 @ TP1 (-$15)</div>
+          <div class="label">Ukuran Lot & Proteksi Otomatis</div>
+          <div class="val" id="liveLotInfo">0.01 Lot (Maks SL $10 / 1.0%)</div>
+          <div class="sub" id="liveRrInfo">Auto-BEP +$1.00 saat Profit +1.5R • Spread &le; 30 pts</div>
+        </div>
+      </div>
+
+      <!-- Panel Radar Dual-Armed Opsi A & Opsi B -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:8px;">
+        <div style="background:linear-gradient(135deg, rgba(244,63,94,0.12), rgba(15,23,42,0.95)); border:1px solid rgba(244,63,94,0.45); border-radius:10px; padding:9px 11px; font-size:11px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="color:#fb7185; font-size:12px;">🔴 OPSI A: SELL EMA50 H1 (US-2A)</strong>
+            <span id="badgeUs2a" style="background:rgba(16,185,129,0.2); color:#34d399; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">ARMED • Conf 35%</span>
+          </div>
+          <div style="color:#e2e8f0;">• <b>Trigger (22:30–23:30):</b> High M15 &ge; <b>$3,940</b> &amp; tutup bearish &lt; <b>$3,940.00</b></div>
+          <div style="color:#94a3b8; margin-top:2px;">• <b>SL:</b> High + $1 (&le;$10) | <b>TP:</b> <span style="color:#34d399; font-weight:700;">$3,920.00</span> (R:R &ge; 1:1.50) | <b>Batal:</b> Close M15 &gt; $3,950</div>
+          <div id="distUs2a" style="color:#fde68a; font-weight:600; margin-top:3px;">Jarak ke Trigger $3,940.00: Menghitung...</div>
+        </div>
+        <div style="background:linear-gradient(135deg, rgba(16,185,129,0.12), rgba(15,23,42,0.95)); border:1px solid rgba(16,185,129,0.45); border-radius:10px; padding:9px 11px; font-size:11px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="color:#34d399; font-size:12px;">🟢 OPSI B: BUY RETEST BREAKOUT (US-2B)</strong>
+            <span id="badgeUs2b" style="background:rgba(16,185,129,0.2); color:#34d399; padding:2px 6px; border-radius:4px; font-weight:700; font-size:10px;">ARMED • Conf 30%</span>
+          </div>
+          <div style="color:#e2e8f0;">• <b>Trigger (22:30–23:30):</b> Low M15 &le; <b>$3,921</b> &amp; tutup bullish di <b>$3,920–$3,925</b></div>
+          <div style="color:#94a3b8; margin-top:2px;">• <b>SL:</b> <span style="color:#fb7185; font-weight:700;">Entry &minus; $10</span> | <b>TP:</b> <span style="color:#34d399; font-weight:700;">Entry + $15</span> (R:R 1:1.50) | <b>Batal:</b> Close M15 &lt; $3,915</div>
+          <div id="distUs2b" style="color:#fde68a; font-weight:600; margin-top:3px;">Jarak ke Zona Retest $3,920.00: Menghitung...</div>
         </div>
       </div>
 
       <div class="chart-box">
         <div class="chart-header">
-          <h2 id="chartTitle">📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Sesi 2 L1/L2)</h2>
+          <h2 id="chartTitle">📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Dual-Armed US-2A/2B)</h2>
           <div class="chart-legend">
             <span style="color:#f59e0b;">━━ EMA 20</span>
             <span style="color:#c084fc;">━━ EMA 50</span>
-            <span style="color:#38bdf8;">🟦 Zona L1 (&ge;$3,915) / L2 (&lt;$3,889)</span>
-            <span style="color:#fbbf24;">🟨 Asian H/L ($3,919.20 / $3,890.99)</span>
-            <span style="color:#10b981;">🟩 Target TP2 ($3,891 / $3,871)</span>
+            <span style="color:#fb7185;">🟥 Opsi A SELL ($3,940–$3,948)</span>
+            <span style="color:#34d399;">🟩 Opsi B BUY ($3,919–$3,921)</span>
+            <span style="color:#f43f5e;">🚨 Batal A ($3,950) / B ($3,915)</span>
           </div>
         </div>
-        <canvas id="xauChart" width="760" height="270" style="height:270px;"></canvas>
+        <canvas id="xauChart" width="820" height="310" style="height:310px;"></canvas>
       </div>
 
       <div class="gates-panel">
         <h3>
-          <span>🛡️ Audit 8-Gate Institutional Risk Shield Fity (Sesi 2 LONDON / EROPA)</span>
-          <span style="color: var(--emerald); font-size: 11.5px;">SPREAD &le; 40 PTS • L1 &amp; L2 ARMED S/D 19:00 WIB</span>
+          <span id="gatesHeaderTitle">🛡️ Audit 8-Gate Institutional Risk Shield Fity (Sesi 3 US — Dual-Armed US-2A &amp; US-2B)</span>
+          <span id="gatesHeaderBadge" style="color: var(--emerald); font-size: 11.5px;">SPREAD &le; 30 PTS • AKTIF 22:30–23:30 WIB</span>
         </h3>
         <div class="gates-grid" id="gatesGrid"></div>
       </div>
     </section>
 
-    <section class="right-col" id="paneLounge">
+    <section class="right-col mobile-hidden" id="paneLounge">
       <div class="lounge-header">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
           <strong style="font-size:13px;">💬 BIQSA Community & AI Lounge (Cloudflare Edge)</strong>
@@ -485,10 +550,15 @@
       <div id="agentTypingBar" style="display:none; padding: 6px 14px; background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(52, 211, 153, 0.3); font-size: 11.5px; color: #34d399; align-items: center; gap: 8px; flex-wrap: wrap;"></div>
 
       <div class="chat-composer">
-        <input id="nickInput" type="text" value="☕ Sobat BIQSA" style="max-width:105px; flex:0 0 105px;" title="Nama Panggilan" />
-        <input id="pinInput" type="password" placeholder="🔑PIN" style="max-width:58px; flex:0 0 58px; text-align:center;" title="Kunci Otorisasi Founder untuk mengirim komando di War Room" />
-        <input id="chatInput" type="text" placeholder="Ketik ke Fity/Firda di #nongkrong-santai (atau Kunci Founder di War Room)..." onkeydown="if(event.key==='Enter') sendChat()" />
-        <button class="btn" onclick="sendChat()">Kirim</button>
+        <div class="chat-composer-row">
+          <input id="nickInput" type="text" value="👑 Pak H (Founder)" style="flex:1; min-width:120px; font-weight:600;" title="Nama Panggilan" />
+          <input id="pinInput" type="password" placeholder="🔑 Kunci Founder (War Room)" oninput="updateComposerModeBadge()" style="max-width:175px; flex:0 0 175px; text-align:center; border-color:rgba(250,204,21,0.5);" title="Masukkan Kunci Founder (otomatis tersimpan di browser) untuk kirim komando ke #biqsa-trading" />
+          <span id="composerModeBadge" style="font-size:10.5px; padding:4px 8px; border-radius:6px; background:rgba(56,189,248,0.15); color:#38bdf8; white-space:nowrap; font-weight:600;">💬 Mode Nongkrong / Isi Kunci untuk War Room</span>
+        </div>
+        <div class="chat-composer-row">
+          <input id="chatInput" type="text" style="flex:1; width:100%; font-size:13.5px; padding:10px 12px; border:1.5px solid #38bdf8; background:#050912; color:#ffffff;" placeholder="✍️ Ketik pesan / komando di sini lalu tekan Enter atau klik Kirim..." onkeydown="if(event.key==='Enter') sendChat()" />
+          <button class="btn" style="padding:10px 18px; font-size:13px;" onclick="sendChat()">Kirim 🚀</button>
+        </div>
       </div>
     </section>
   </main>
@@ -553,9 +623,32 @@
 
     let currentChannel = 'xauusd-war-room';
     let allChannels = JSON.parse(JSON.stringify(FALLBACK_CHANNELS));
-    let liveGoldPrice = 3905.50;
+    let liveGoldPrice = 3942.00;
     let liveFeedData = null;
     let activeChartTf = 'M15';
+    let proFullMode = false;
+
+    function toggleProTerminalMode() {
+      proFullMode = !proFullMode;
+      const mainEl = document.getElementById('mainGrid');
+      const loungeEl = document.getElementById('paneLounge');
+      const radarEl = document.getElementById('paneRadar');
+      const btn = document.getElementById('proModeBtn');
+      const canvas = document.getElementById('xauChart');
+      if (proFullMode) {
+        if (mainEl) mainEl.style.gridTemplateColumns = '1fr';
+        if (loungeEl) loungeEl.style.display = 'none';
+        if (radarEl) radarEl.classList.remove('mobile-hidden');
+        if (canvas) { canvas.width = 1280; canvas.height = 410; canvas.style.height = '410px'; }
+        if (btn) { btn.textContent = '💬 Tampilkan Split Chat + Terminal'; btn.style.background = 'rgba(56,189,248,0.2)'; }
+      } else {
+        if (mainEl) mainEl.style.gridTemplateColumns = '';
+        if (loungeEl) loungeEl.style.display = '';
+        if (canvas) { canvas.width = 820; canvas.height = 310; canvas.style.height = '310px'; }
+        if (btn) { btn.textContent = '🖥️ Mode Pro Trader'; btn.style.background = ''; }
+      }
+      setTimeout(drawXauChart, 50);
+    }
 
     function switchChartTf(tf) {
       activeChartTf = tf;
@@ -565,11 +658,11 @@
       if (tf === 'M15') {
         if (b15) { b15.style.borderColor = 'var(--gold)'; b15.style.color = '#fde68a'; }
         if (bH1) { bH1.style.borderColor = 'var(--border)'; bH1.style.color = '#e2e8f0'; }
-        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Sesi 2 L1/L2)';
+        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (M15 — 40 Bar Terakhir + EMA20/50 + Dual-Armed US-2A/2B)';
       } else {
         if (bH1) { bH1.style.borderColor = 'var(--gold)'; bH1.style.color = '#fde68a'; }
         if (b15) { b15.style.borderColor = 'var(--border)'; b15.style.color = '#e2e8f0'; }
-        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (H1 — 40 Bar Terakhir + EMA20/50 + Sesi 2 L1/L2)';
+        if (titleEl) titleEl.textContent = '📈 Native FBS-Demo XAUUSD Chart (H1 — 40 Bar Terakhir + EMA20/50 + Dual-Armed US-2A/2B)';
       }
       drawXauChart();
     }
@@ -602,21 +695,56 @@
         liveFeedData = d;
         const prevPrice = liveGoldPrice;
         liveGoldPrice = Number(d.bid || liveGoldPrice);
+        const liveAsk = Number(d.ask || (liveGoldPrice + 0.28));
 
         const priceEl = document.getElementById('livePrice');
         if (priceEl) {
-          priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / $${Number(d.ask).toFixed(2)}`;
+          priceEl.textContent = `$${liveGoldPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / $${liveAsk.toFixed(2)}`;
           priceEl.style.color = liveGoldPrice >= prevPrice ? '#34d399' : '#f59e0b';
         }
         const spreadEl = document.getElementById('liveSpread');
         if (spreadEl) {
-          const spOk = Number(d.spread_points) <= 40;
-          spreadEl.innerHTML = `<span style="color:${spOk ? '#34d399' : '#f43f5e'}">Spread: ${d.spread_points} pts (${spOk ? '&le; 40 OK' : '&gt; 40 HOLD'})</span> • Asia H/L: $${Number(d.asian_range_high).toFixed(2)} / $${Number(d.asian_range_low).toFixed(2)}`;
+          const spOk = Number(d.spread_points) <= 30;
+          spreadEl.innerHTML = `<span style="color:${spOk ? '#34d399' : '#f43f5e'}">Spread: ${d.spread_points} pts (${spOk ? '&le; 30 OK' : '&gt; 30 HOLD'})</span> • Asia H/L: $${Number(d.asian_range_high).toFixed(2)} / $${Number(d.asian_range_low).toFixed(2)}`;
         }
         const sessEl = document.getElementById('kpiSessionLabel');
         if (sessEl) {
-          sessEl.textContent = `XAUUSD Native FBS-Demo (Sesi ${d.session_code || 'LONDON'} • ${d.timestamp_wib ? d.timestamp_wib.slice(11) : ''})`;
+          sessEl.textContent = `XAUUSD Native FBS-Demo (Sesi ${d.session_code || 'NEW_YORK'} • ${d.timestamp_wib ? d.timestamp_wib.slice(11) : ''})`;
         }
+
+        // Update Multi-Timeframe Radar Bar
+        if (d.indicators) {
+          const fmtTf = (tfKey, elId) => {
+            const ind = d.indicators[tfKey];
+            const el = document.getElementById(elId);
+            if (!ind || !el) return;
+            const tr = String(ind.trend_bias || ind.trend || 'RANGING').toUpperCase();
+            const col = tr.includes('BULL') ? '#34d399' : (tr.includes('BEAR') ? '#fb7185' : '#fde68a');
+            el.innerHTML = `<b style="color:#e2e8f0;">${tfKey}:</b> <span style="color:${col}; font-weight:700;">${tr}</span> <span style="color:#94a3b8;">(RSI ${Number(ind.rsi14 || 50).toFixed(0)} • ATR $${Number(ind.atr14 || 0).toFixed(1)})</span>`;
+          };
+          fmtTf('D1', 'mtfD1');
+          fmtTf('H4', 'mtfH4');
+          fmtTf('H1', 'mtfH1');
+          fmtTf('M15', 'mtfM15');
+          fmtTf('M5', 'mtfM5');
+        }
+
+        // Update Dual-Armed Opsi A & Opsi B live distance & status
+        const distAEl = document.getElementById('distUs2a');
+        if (distAEl) {
+          const diffA = liveGoldPrice - 3940.00;
+          distAEl.innerHTML = diffA >= 0
+            ? `⚡ Harga DI DALAM ZONA Opsi A ($${liveGoldPrice.toFixed(2)} &ge; $3,940.00) • Menunggu M15 tutup bearish &lt; $3,940.00 @ 22:30 WIB`
+            : `📡 Jarak ke Zona SELL $3,940.00: +$${Math.abs(diffA).toFixed(2)} (Bid saat ini $${liveGoldPrice.toFixed(2)})`;
+        }
+        const distBEl = document.getElementById('distUs2b');
+        if (distBEl) {
+          const diffB = liveGoldPrice - 3921.00;
+          distBEl.innerHTML = diffB <= 0
+            ? `⚡ Harga DI ZONA RETEST Opsi B ($${liveGoldPrice.toFixed(2)} &le; $3,921.00) • Menunggu M15 tutup bullish $3,920–$3,925 @ 22:30 WIB`
+            : `📡 Jarak ke Zona BUY Retest $3,921.00: -$${Math.abs(diffB).toFixed(2)} di bawah harga saat ini`;
+        }
+
         if (d.mt5_execution_bridge) {
           const b = d.mt5_execution_bridge;
           const eqEl = document.getElementById('liveEquity');
@@ -627,9 +755,24 @@
         if (d.standing_ack_gate8) {
           const p = d.standing_ack_gate8;
           const ptEl = document.getElementById('livePlanTitle');
-          if (ptEl) ptEl.textContent = `SESI 2: L1 (ASIA HIGH) / L2 (LOW BREAK)`;
           const psEl = document.getElementById('livePlanSub');
-          if (psEl) psEl.textContent = `L1 High \u2265 $3,915 (0.55) \u2022 L2 Close < $3,889 (0.45) \u2022 s/d 19:00 WIB`;
+          if (p.rencana_us2_dual_experiment) {
+            const u2 = p.rencana_us2_dual_experiment;
+            const invA = u2.opsi_A_sell && u2.opsi_A_sell.invalidated;
+            const invB = u2.opsi_B_buy && u2.opsi_B_buy.invalidated;
+            if (ptEl) ptEl.textContent = `DUAL-ARMED: US-2A (SELL 3940) & US-2B (BUY 3920–3925)`;
+            if (psEl) psEl.textContent = `Lockout 21:30–22:30 (ISM) • Eksekusi 22:30–23:30 WIB • Peluru: ${u2.common_rules ? u2.common_rules.quota_used : 0}/1`;
+            const bA = document.getElementById('badgeUs2a');
+            if (bA) {
+              bA.textContent = invA ? 'BATAL (Close > $3,950)' : 'ARMED • Conf 35%';
+              bA.style.color = invA ? '#f43f5e' : '#34d399';
+            }
+            const bB = document.getElementById('badgeUs2b');
+            if (bB) {
+              bB.textContent = invB ? 'BATAL (Close < $3,915)' : 'ARMED • Conf 30%';
+              bB.style.color = invB ? '#f43f5e' : '#34d399';
+            }
+          }
         }
         if (d.gates) {
           const gArr = Object.entries(d.gates).map(([k, v]) => ({
@@ -715,12 +858,54 @@
       renderMessages(forceBottom);
     }
 
+    function updateComposerModeBadge() {
+      const pinEl = document.getElementById('pinInput');
+      const badge = document.getElementById('composerModeBadge');
+      const chBadge = document.getElementById('channelModeBadge');
+      const hasPin = pinEl && pinEl.value.trim().length > 0;
+      if (hasPin) {
+        localStorage.setItem('biqsa_founder_pin', pinEl.value.trim());
+      }
+      if (badge) {
+        if (currentChannel === 'xauusd-war-room' && hasPin) {
+          badge.style.background = 'rgba(16,185,129,0.22)';
+          badge.style.color = '#34d399';
+          badge.textContent = '👑 Komando War Room -> #biqsa-trading';
+        } else if (currentChannel === 'nongkrong-santai') {
+          badge.style.background = 'rgba(56,189,248,0.18)';
+          badge.style.color = '#38bdf8';
+          badge.textContent = '☕ Kirim ke #nongkrong-santai';
+        } else {
+          badge.style.background = 'rgba(245,158,11,0.18)';
+          badge.style.color = '#fbbf24';
+          badge.textContent = '🔑 Isi Kunci Founder untuk War Room';
+        }
+      }
+      if (chBadge && currentChannel === 'xauusd-war-room') {
+        if (hasPin) {
+          chBadge.style.background = 'rgba(16,185,129,0.2)';
+          chBadge.style.color = '#34d399';
+          chBadge.textContent = '👑 FOUNDER COMMAND ACTIVE (Terkoneksi ke #biqsa-trading)';
+        } else {
+          chBadge.style.background = 'rgba(245,158,11,0.15)';
+          chBadge.style.color = '#fbbf24';
+          chBadge.textContent = '🔒 ISI KUNCI FOUNDER UNTUK KOMANDO (#biqsa-trading)';
+        }
+      }
+    }
+
     async function loadState() {
       const savedNick = localStorage.getItem('biqsa_lounge_nick');
       if (savedNick) {
         const nickEl = document.getElementById('nickInput');
         if (nickEl) nickEl.value = savedNick;
       }
+      const savedPin = localStorage.getItem('biqsa_founder_pin');
+      if (savedPin) {
+        const pinEl = document.getElementById('pinInput');
+        if (pinEl) pinEl.value = savedPin;
+      }
+      updateComposerModeBadge();
       renderGates(FALLBACK_GATES);
       renderMessages(true);
       await Promise.all([syncNativeFbsFeed(), syncFromCloudflareEdge(true)]);
@@ -759,6 +944,7 @@
           badge.textContent = '🔒 READ-ONLY MIRROR (#biqsa-trading Steril)';
         }
       }
+      updateComposerModeBadge();
       renderMessages(true);
     }
 
@@ -776,18 +962,58 @@
       }
       stream.dataset.lastSig = sig;
 
+      const EMOJI_MAP = {
+        "brain": "🧠", "chart_with_upwards_trend": "📈", "chart_with_downwards_trend": "📉",
+        "bar_chart": "📊", "shield": "🛡️", "rocket": "🚀", "crown": "👑", "newspaper": "📰",
+        "zap": "⚡", "fire": "🔥", "large_green_circle": "🟢", "purple_circle": "🟣",
+        "large_blue_circle": "🔵", "red_circle": "🔴", "yellow_circle": "🟡",
+        "white_check_mark": "✅", "heavy_check_mark": "✔️", "ballot_box_with_check": "☑️",
+        "rotating_light": "🚨", "warning": "⚠️", "octagonal_sign": "🛑", "no_entry": "⛔",
+        "art": "🎨", "handshake": "🤝", "raised_hands": "🙌", "clap": "👏",
+        "sweat_smile": "😅", "smile": "😄", "grin": "😁", "joy": "😂", "wink": "😉",
+        "robot_face": "🤖", "radar": "📡", "satellite": "📡", "satellite_antenna": "📡",
+        "sparkles": "✨", "star": "⭐", "star2": "🌟", "dizzy": "💫",
+        "lock": "🔒", "unlock": "🔓", "key": "🔑", "closed_lock_with_key": "🔐",
+        "coffee": "☕", "tea": "🍵", "dart": "🎯", "bullseye": "🎯",
+        "thumbsup": "👍", "+1": "👍", "thumbsdown": "👎", "-1": "👎",
+        "eyes": "👀", "eye": "👁️", "lion_face": "🦁", "lion": "🦁",
+        "trophy": "🏆", "medal": "🏅", "first_place_medal": "🥇",
+        "microscope": "🔬", "telescope": "🔭", "gear": "⚙️", "wrench": "🔧", "hammer_and_wrench": "🛠️",
+        "globe_with_meridians": "🌐", "earth_asia": "🌏", "earth_americas": "🌎", "earth_africa": "🌍",
+        "classical_building": "🏛️", "statue_of_liberty": "🗽", "bank": "🏦",
+        "hourglass_flowing_sand": "⏳", "hourglass": "⌛", "watch": "⌚", "alarm_clock": "⏰", "stopwatch": "⏱️",
+        "moneybag": "💰", "dollar": "💵", "gem": "💎", "coin": "🪙", "bulb": "💡",
+        "mega": "📣", "loudspeaker": "📢", "bell": "🔔", "memo": "📝", "pushpin": "📌",
+        "mag": "🔍", "mag_right": "🔎", "link": "🔗", "framed_picture": "🖼️",
+        "muscle": "💪", "pray": "🙏", "ok_hand": "👌", "wave": "👋", "saluting_face": "🫡",
+        "heart": "❤️", "green_heart": "💚", "blue_heart": "💙", "purple_heart": "💜", "100": "💯", "boom": "💥"
+      };
+      const formatEmojiText = (s) => String(s || "").replace(/:([a-z0-9_+-]+):/gi, (m, c) => EMOJI_MAP[c.toLowerCase()] || m);
+
       stream.innerHTML = list.map(m => {
-        const reacts = Object.entries(m.reactions || {}).map(([k, v]) => `<span class="react-pill">${k} ${v}</span>`).join('');
+        const reacts = Object.entries(m.reactions || {}).map(([k, v]) => `<span class="react-pill">${formatEmojiText(k)} ${v}</span>`).join('');
+        let imgUrl = m.imageUrl || null;
+        if (!imgUrl && m.text) {
+          const im = String(m.text).match(/<?(https?:\/\/[^\s>|]+\.(?:png|jpg|jpeg|webp)(?:\?[^\s>|]*)?)>?/i);
+          if (im) imgUrl = im[1];
+        }
+        if (imgUrl && imgUrl.includes('/api/chart/')) {
+          imgUrl = imgUrl.split('/api/chart/').pop().split('?')[0];
+        }
+        const imgHtml = imgUrl
+          ? `<div style="margin-top:9px;"><img src="${imgUrl}" alt="Visual Analysis Chart" onclick="openVisualModal('${imgUrl}')" style="max-width:100%; max-height:320px; border-radius:10px; border:1.5px solid rgba(245,158,11,0.55); box-shadow:0 4px 18px rgba(0,0,0,0.45); cursor:zoom-in; display:block;" title="Klik untuk memperbesar Visual Chart" /></div>`
+          : '';
         return `
           <div class="msg-card">
-            <div class="msg-avatar">${m.avatar || '💬'}</div>
+            <div class="msg-avatar">${formatEmojiText(m.avatar || '💬')}</div>
             <div class="msg-body">
               <div class="msg-meta">
-                <span class="msg-user" style="color:${m.color || '#fff'}">${m.user}</span>
+                <span class="msg-user" style="color:${m.color || '#fff'}">${formatEmojiText(m.user)}</span>
                 <span class="msg-role">${m.role}</span>
                 <span class="msg-time">${m.time}</span>
               </div>
-              <div class="msg-text">${m.text}</div>
+              <div class="msg-text">${formatEmojiText(m.text)}</div>
+              ${imgHtml}
               <div class="msg-reactions">${reacts}</div>
             </div>
           </div>
@@ -810,12 +1036,24 @@
       const input = document.getElementById('chatInput');
       const nickEl = document.getElementById('nickInput');
       const pinEl = document.getElementById('pinInput');
-      const user = (nickEl ? nickEl.value.trim() : '') || '☕ Sobat BIQSA';
-      const pin = (pinEl ? pinEl.value.trim() : '');
+      const user = (nickEl ? nickEl.value.trim() : '') || '👑 Pak H (Founder)';
+      let pin = (pinEl ? pinEl.value.trim() : '') || localStorage.getItem('biqsa_founder_pin') || '';
       const text = input.value.trim();
       if (!text) return;
+
+      if (currentChannel === 'xauusd-war-room' && !pin) {
+        const entered = window.prompt('👑 Pak H, masukkan Kunci Otorisasi Founder untuk mengirim komando ke #biqsa-trading (otomatis tersimpan di browser).\nAtau kosongkan / klik Cancel untuk mengirim ke #☕-nongkrong-santai:');
+        if (entered && entered.trim()) {
+          pin = entered.trim();
+          if (pinEl) pinEl.value = pin;
+          localStorage.setItem('biqsa_founder_pin', pin);
+          updateComposerModeBadge();
+        }
+      }
+
       input.value = '';
       localStorage.setItem('biqsa_lounge_nick', user);
+      if (pin) localStorage.setItem('biqsa_founder_pin', pin);
 
       const isFounderWarRoom = (currentChannel === 'xauusd-war-room' && pin.length > 0);
 
@@ -833,7 +1071,11 @@
           body: JSON.stringify({ user, text, channel: targetCh, pin })
         });
         if (res.status === 403) {
-          alert('🔒 Kunci Otorisasi Founder tidak valid. Untuk mengobrol umum, silakan gunakan tab #☕-nongkrong-santai.');
+          input.value = text;
+          localStorage.removeItem('biqsa_founder_pin');
+          if (pinEl) pinEl.value = '';
+          updateComposerModeBadge();
+          alert('🔒 Kunci Otorisasi Founder tidak cocok (gunakan 9724 atau 8888). Pesan Anda masih utuh di kotak ketik.');
           return;
         }
         allChannels[targetCh].push({
@@ -849,7 +1091,9 @@
         if (res.ok) {
           setTimeout(() => syncFromCloudflareEdge(true), 800);
         }
-      } catch (e) {}
+      } catch (e) {
+        input.value = text;
+      }
     }
 
     function computeEmaSeries(closes, period) {
@@ -890,11 +1134,11 @@
       const ema20Slice = allEma20.slice(startIdx);
       const ema50Slice = allEma50.slice(startIdx);
 
-      const asiaH = Number((liveFeedData && liveFeedData.asian_range_high) || 3914.99);
-      const asiaL = Number((liveFeedData && liveFeedData.asian_range_low) || 3890.99);
+      const asiaH = Number((liveFeedData && liveFeedData.asian_range_high) || 3919.07);
+      const asiaL = Number((liveFeedData && liveFeedData.asian_range_low) || 3889.03);
 
-      let minP = Math.min(asiaL, 3890.0);
-      let maxP = Math.max(asiaH, 3922.0);
+      let minP = Math.min(asiaL, 3905.0);
+      let maxP = Math.max(asiaH, 3953.0);
       for (let i = 0; i < bars.length; i++) {
         minP = Math.min(minP, Number(bars[i].low), ema20Slice[i], ema50Slice[i]);
         maxP = Math.max(maxP, Number(bars[i].high), ema20Slice[i], ema50Slice[i]);
@@ -903,7 +1147,7 @@
       minP -= pad;
       maxP += pad;
 
-      const padLeft = 16, padRight = 150, padTop = 14, padBottom = 38;
+      const padLeft = 16, padRight = 158, padTop = 14, padBottom = 38;
       const chartW = W - padLeft - padRight;
       const chartH = H - padTop - padBottom;
       const yOf = p => padTop + ((maxP - p) / (maxP - minP)) * chartH;
@@ -923,39 +1167,54 @@
         ctx.fillText(`$${pVal.toFixed(1)}`, W - padRight + 6, y + 3);
       }
 
-      // Shaded Rencana A2 Entry Zone ($3,912 - $3,918)
-      const yZTop = yOf(3918.0), yZBot = yOf(3912.0);
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.11)';
-      ctx.fillRect(padLeft, yZTop, chartW, Math.max(2, yZBot - yZTop));
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+      // Shaded Opsi A Supply Zone ($3,940.00 - $3,948.00 SELL EMA50 H1)
+      const yATop = yOf(3948.0), yABot = yOf(3940.0);
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.14)';
+      ctx.fillRect(padLeft, yATop, chartW, Math.max(2, yABot - yATop));
+      ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
       ctx.setLineDash([3, 3]);
-      ctx.strokeRect(padLeft, yZTop, chartW, Math.max(2, yZBot - yZTop));
+      ctx.strokeRect(padLeft, yATop, chartW, Math.max(2, yABot - yATop));
 
-      // Shaded Trigger Close Band ($3,910 - $3,913)
-      const yTTop = yOf(3913.0), yTBot = yOf(3910.0);
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.09)';
-      ctx.fillRect(padLeft, yTTop, chartW, Math.max(2, yTBot - yTTop));
+      // Shaded Opsi B Demand Retest Zone ($3,919.00 - $3,921.00 BUY RETEST)
+      const yBTop = yOf(3921.0), yBBot = yOf(3919.0);
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
+      ctx.fillRect(padLeft, yBTop, chartW, Math.max(2, yBBot - yBTop));
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.55)';
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(padLeft, yBTop, chartW, Math.max(2, yBBot - yBTop));
 
+      const levelItems = [];
       const drawLevel = (price, color, label, solid = false) => {
         if (price < minP || price > maxP) return;
         const y = yOf(price);
         ctx.strokeStyle = color;
-        ctx.lineWidth = solid ? 1.4 : 1.1;
+        ctx.lineWidth = solid ? 1.5 : 1.1;
         ctx.setLineDash(solid ? [] : [5, 4]);
         ctx.beginPath();
         ctx.moveTo(padLeft, y);
         ctx.lineTo(W - padRight, y);
         ctx.stroke();
-        ctx.fillStyle = color;
-        ctx.font = 'bold 10px Segoe UI';
-        ctx.fillText(`${label} $${price.toFixed(2)}`, W - padRight + 6, y - 2);
+        levelItems.push({ y, price, color, label, solid });
       };
 
-      drawLevel(3920.00, '#f43f5e', 'Batal H1 >');
-      drawLevel(asiaH, '#fbbf24', 'Asian High');
+      drawLevel(3950.00, '#f43f5e', 'Batal A >');
+      drawLevel(3940.00, '#fb7185', 'Opsi A SELL <');
+      drawLevel(3935.00, '#34d399', 'TP Opsi B');
+      drawLevel(3920.00, '#10b981', 'TP A / Opsi B >');
+      drawLevel(3910.00, '#f97316', 'SL Opsi B');
       drawLevel(asiaL, '#fde68a', 'Asian Low');
-      drawLevel(3891.00, '#10b981', 'TP2 Target');
       drawLevel(liveGoldPrice, '#38bdf8', 'LIVE BID', true);
+
+      // Sort right-axis labels top-to-bottom and enforce minimum 13px vertical spacing to prevent overlap
+      levelItems.sort((a, b) => a.y - b.y);
+      let prevLabelY = -999;
+      for (const item of levelItems) {
+        const ly = Math.max(item.y + 3, prevLabelY + 13);
+        prevLabelY = ly;
+        ctx.fillStyle = item.color;
+        ctx.font = 'bold 10px Segoe UI';
+        ctx.fillText(`${item.label} $${item.price.toFixed(2)}`, W - padRight + 6, ly);
+      }
 
       // Draw Tick Volume bars at bottom
       let maxVol = 1;
@@ -1016,7 +1275,34 @@
       drawCurve(ema50Slice, '#c084fc');
     }
 
+    function openLogoModal() {
+      openVisualModal('logo.jpg', '✨ BIQSA ENTERPRISE — XAUUSD GOLD EMBLEM', '460px');
+    }
+    function openVisualModal(src, caption = '📊 BIQSA ENTERPRISE — VISUAL ANALYSIS CHART', maxW = '920px') {
+      const m = document.getElementById('logoModal');
+      const img = document.getElementById('modalImg');
+      const cap = document.getElementById('modalCap');
+      const box = document.getElementById('modalBox');
+      if (img) img.src = src;
+      if (cap) cap.textContent = caption;
+      if (box) box.style.maxWidth = maxW;
+      if (m) m.style.display = 'flex';
+    }
+    function closeLogoModal() {
+      const m = document.getElementById('logoModal');
+      if (m) m.style.display = 'none';
+    }
+
     loadState();
   </script>
+
+  <!-- Modal Preview Lambang Resmi & Visual Analysis Chart BIQSA Enterprise -->
+  <div id="logoModal" onclick="closeLogoModal()" style="display:none; position:fixed; inset:0; background:rgba(7,11,20,0.88); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:20px; cursor:zoom-out;">
+    <div id="modalBox" style="text-align:center; max-width:920px; width:100%;" onclick="event.stopPropagation()">
+      <img id="modalImg" src="logo.jpg" alt="BIQSA Enterprise Visual" style="width:100%; max-height:82vh; object-fit:contain; border-radius:18px; border:2px solid #f59e0b; box-shadow:0 0 45px rgba(245,158,11,0.55);" />
+      <div id="modalCap" style="margin-top:12px; color:#fde68a; font-weight:700; font-size:14px; letter-spacing:1px;">✨ BIQSA ENTERPRISE — XAUUSD GOLD EMBLEM</div>
+      <button onclick="closeLogoModal()" style="margin-top:10px; background:#f59e0b; color:#070b14; border:none; padding:7px 18px; border-radius:8px; font-weight:800; cursor:pointer;">Tutup</button>
+    </div>
+  </div>
 </body>
 </html>
