@@ -495,7 +495,7 @@
           </div>
           <div style="display:flex; gap:6px; align-items:center;">
             <span id="d1SyncBadge" style="font-size:10px; color:#34d399; background:rgba(16,185,129,0.14); padding:2px 7px; border-radius:5px; font-weight:700;">🟢 D1: biqsa-trading-db • Cron 0 * * * *</span>
-            <button class="btn-secondary" style="padding:3px 9px; font-size:10.5px; border-color:var(--gold); color:#fde68a;" onclick="openAddAccountModal()">+ Tambah Akun MT5</button>
+            <span style="font-size:10px; color:#fde68a; background:rgba(245,158,11,0.14); border:1px solid rgba(245,158,11,0.35); padding:2px 8px; border-radius:5px; font-weight:600;">🔒 Registrasi Akun: Vault VPS + Otorisasi Telegram Pak H</span>
           </div>
         </div>
         <div style="overflow-x:auto;">
@@ -753,7 +753,7 @@
     }
 
     let currentJournalFilter = 'ALL';
-    let selectedAccountId = 'fbs_demo_106857046';
+    let selectedAccountId = 'acc_demo_7046';
 
     function renderMultiAccounts(accountsArr) {
       const tb = document.getElementById('multiAccountTableBody');
@@ -1499,83 +1499,8 @@
       if (m) m.style.display = 'none';
     }
 
-    function openAddAccountModal() {
-      const m = document.getElementById('addAccountModal');
-      if (m) m.style.display = 'flex';
-    }
-    function closeAddAccountModal() {
-      const m = document.getElementById('addAccountModal');
-      if (m) m.style.display = 'none';
-    }
-    async function submitNewAccount() {
-      const label = document.getElementById('accLabelInput').value.trim();
-      const server = document.getElementById('accServerInput').value.trim();
-      const login = Number(document.getElementById('accLoginInput').value.trim());
-      const equity = Number(document.getElementById('accEquityInput').value.trim() || 1000);
-      const mode = document.getElementById('accModeSelect').value;
-      const pin = document.getElementById('accPinInput').value.trim() || (document.getElementById('pinInput') ? document.getElementById('pinInput').value.trim() : '');
-      const msgEl = document.getElementById('accModalMsg');
-      if (!label || !login || !pin) {
-        if (msgEl) { msgEl.style.color = '#fb7185'; msgEl.textContent = 'Mohon lengkapi Nama Alias, Login MT5, dan Kunci Founder.'; }
-        return;
-      }
-      try {
-        if (msgEl) { msgEl.style.color = '#fde68a'; msgEl.textContent = 'Menyimpan ke Cloudflare D1 (biqsa-trading-db)...'; }
-        const res = await fetch(`${EDGE_API_BASE}/api/accounts`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pin: pin,
-            account_id: `mt5_${login}`,
-            label: label,
-            broker: 'FBS MetaTrader 5',
-            server: server || 'FBS-Demo',
-            login: login,
-            equity: equity,
-            balance: equity,
-            initial_balance: equity,
-            mode: mode,
-            status: mode === 'REAL' ? 'STANDBY_LOCKED' : 'ACTIVE_EXECUTION'
-          })
-        });
-        const j = await res.json();
-        if (j && j.ok) {
-          if (msgEl) { msgEl.style.color = '#34d399'; msgEl.textContent = '✅ Akun berhasil disimpan di Cloudflare D1!'; }
-          setTimeout(() => { closeAddAccountModal(); syncNativeFbsFeed(); }, 700);
-        } else {
-          if (msgEl) { msgEl.style.color = '#fb7185'; msgEl.textContent = 'Gagal: ' + (j.error || 'Kunci tidak valid'); }
-        }
-      } catch (e) {
-        if (msgEl) { msgEl.style.color = '#fb7185'; msgEl.textContent = 'Error: ' + String(e); }
-      }
-    }
-
     loadState();
   </script>
-
-  <!-- Modal Tambah Akun Multi-Account (Cloudflare D1) -->
-  <div id="addAccountModal" onclick="closeAddAccountModal()" style="display:none; position:fixed; inset:0; background:rgba(7,11,20,0.88); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:#0f172a; border:1px solid #38bdf8; border-radius:14px; max-width:420px; width:100%; padding:18px;" onclick="event.stopPropagation()">
-      <h3 style="margin:0 0 10px 0; color:#fde68a; font-size:15px;">🏦 Tambah / Update Akun MT5 (Cloudflare D1)</h3>
-      <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
-        <input id="accLabelInput" type="text" placeholder="Nama / Pemilik (mis. Pak H — Demo 2)" style="padding:8px; border-radius:7px; border:1px solid #233252; background:#070b14; color:#fff;" />
-        <input id="accServerInput" type="text" value="FBS-Demo" placeholder="Server Broker (FBS-Demo / FBS-Real-1)" style="padding:8px; border-radius:7px; border:1px solid #233252; background:#070b14; color:#fff;" />
-        <input id="accLoginInput" type="number" placeholder="Nomor Login MT5 (mis. 106857046)" style="padding:8px; border-radius:7px; border:1px solid #233252; background:#070b14; color:#fff;" />
-        <input id="accEquityInput" type="number" value="1000" placeholder="Ekuitas Awal USD (mis. 1000)" style="padding:8px; border-radius:7px; border:1px solid #233252; background:#070b14; color:#fff;" />
-        <select id="accModeSelect" style="padding:8px; border-radius:7px; border:1px solid #233252; background:#070b14; color:#fff;">
-          <option value="DEMO">LIVE DEMO (Aktif 1.5% Risiko / SL)</option>
-          <option value="SHADOW">SHADOW (Simulasi Paper)</option>
-          <option value="REAL">REAL VAULT (Terkunci / Standby)</option>
-        </select>
-        <input id="accPinInput" type="password" placeholder="🔑 Kunci Founder (Otorisasi D1)" style="padding:8px; border-radius:7px; border:1px solid rgba(250,204,21,0.5); background:#070b14; color:#fff;" />
-        <div id="accModalMsg" style="font-size:11px; min-height:16px;"></div>
-        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:4px;">
-          <button class="btn-secondary" onclick="closeAddAccountModal()">Batal</button>
-          <button class="btn" onclick="submitNewAccount()">Simpan ke D1 🚀</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Modal Preview Lambang Resmi & Visual Analysis Chart BIQSA Enterprise -->
   <div id="logoModal" onclick="closeLogoModal()" style="display:none; position:fixed; inset:0; background:rgba(7,11,20,0.88); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:20px; cursor:zoom-out;">
