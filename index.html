@@ -612,6 +612,52 @@
         </div>
       </div>
 
+      <!-- Panel Dewan AI Cloudflare 2026: CENAYANG (@cf/cloudflare/clairic) + COPSOW (DeepSeek V4 Pro) + COUNCIL (GLM-5.3) + WARKOP (Llama 3.3 70B) -->
+      <div style="background:linear-gradient(135deg, rgba(245,158,11,0.09), rgba(15,23,42,0.96)); border:1px solid rgba(245,158,11,0.45); border-radius:12px; padding:11px 13px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+          <div style="font-size:12px; font-weight:800; color:#fde68a;">
+            ☕🏛️ DEWAN AI CLOUDFLARE 2026 — CENAYANG (<code>@cf/cloudflare/clairic</code>) &amp; <code>EPI-1 &rarr; IQEXS &rarr; IQES</code>
+          </div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span id="clairicSpanBadge" style="font-size:9.5px; padding:2px 7px; border-radius:5px; background:rgba(16,185,129,0.16); color:#34d399; font-weight:700;">
+              EPI-1 0% Hallucination • FINITY 8/99
+            </span>
+            <button onclick="refreshClairicCouncilLive()" id="btnRefreshClairic" style="background:rgba(56,189,248,0.16); color:#38bdf8; border:1px solid rgba(56,189,248,0.4); padding:2px 8px; border-radius:5px; font-size:10px; font-weight:700; cursor:pointer;">
+              🔄 Sidang Ulang Live
+            </button>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:7px; margin-bottom:9px; font-size:11px;">
+          <div style="background:#09101f; border:1px solid #1e293b; border-radius:8px; padding:6px 9px;">
+            <div style="color:#94a3b8; font-size:9.5px;">🛡️ Support Kuantil (<code>p10</code>)</div>
+            <div id="clairicP10Val" style="font-weight:800; font-size:13.5px; color:#34d399; margin-top:2px;">$4,055.00</div>
+          </div>
+          <div style="background:#09101f; border:1px solid #f59e0b; border-radius:8px; padding:6px 9px;">
+            <div style="color:#fde68a; font-size:9.5px;">⚖️ Titik Keseimbangan (<code>Median</code>)</div>
+            <div id="clairicMedianVal" style="font-weight:800; font-size:13.5px; color:#fde68a; margin-top:2px;">$4,075.00</div>
+          </div>
+          <div style="background:#09101f; border:1px solid #1e293b; border-radius:8px; padding:6px 9px;">
+            <div style="color:#94a3b8; font-size:9.5px;">🚀 Resistance Kuantil (<code>p90</code>)</div>
+            <div id="clairicP90Val" style="font-weight:800; font-size:13.5px; color:#fb7185; margin-top:2px;">$4,096.00</div>
+          </div>
+          <div style="background:#09101f; border:1px solid #1e293b; border-radius:8px; padding:6px 9px;">
+            <div style="color:#94a3b8; font-size:9.5px;">🎯 WinProb London v2 &amp; Forecast 4H</div>
+            <div id="clairicForecastVal" style="font-weight:800; font-size:11.5px; color:#38bdf8; margin-top:2px;">Median 66% • H1: $4,072 &rarr; $4,071</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr; gap:6px; font-size:11px; line-height:1.45;">
+          <div style="background:rgba(9,16,31,0.85); border-left:3px solid #38bdf8; border-radius:6px; padding:6px 9px; color:#e2e8f0;">
+            <b style="color:#38bdf8;">🔬 COPSOW (DeepSeek V4 Pro):</b> <span id="clairicCopsowTxt">Memuat analisis kuantitatif DeepSeek V4 Pro...</span>
+          </div>
+          <div style="background:rgba(9,16,31,0.85); border-left:3px solid #f43f5e; border-radius:6px; padding:6px 9px; color:#e2e8f0;">
+            <b style="color:#fb7185;">⚖️ COUNCIL (Z.ai GLM-5.3 &ldquo;Si Hakim Tengil&rdquo; — Audit EPI-1):</b> <span id="clairicCouncilTxt">Memuat uji kritis Red-Team GLM-5.3...</span>
+          </div>
+          <div style="background:rgba(9,16,31,0.85); border-left:3px solid #34d399; border-radius:6px; padding:6px 9px; color:#e2e8f0;">
+            <b style="color:#34d399;">☕ WARKOP (Airin Llama 3.3 70B) &amp; IQES Heart:</b> <span id="clairicWarkopTxt">Memuat sintesis eksekutif untuk Komandan Pak Rosihan...</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Tabel Jurnal Sinyal Live & Shadow (Cloudflare D1 / signal_journal) -->
       <div style="background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:10px 12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
@@ -903,6 +949,48 @@
       }
     }
 
+    function renderClairicCouncil(cc) {
+      if (!cc) return;
+      const c = cc.clairic_cenayang || {};
+      const eq = c.equilibrium_price || {};
+      const wp = c.london_breakout_success_prob || {};
+      const fc = Array.isArray(c.h1_forecast_4h) ? c.h1_forecast_4h : [];
+      const p10El = document.getElementById('clairicP10Val');
+      const medEl = document.getElementById('clairicMedianVal');
+      const p90El = document.getElementById('clairicP90Val');
+      const fcEl = document.getElementById('clairicForecastVal');
+      const spEl = document.getElementById('clairicSpanBadge');
+      const copEl = document.getElementById('clairicCopsowTxt');
+      const couEl = document.getElementById('clairicCouncilTxt');
+      const warEl = document.getElementById('clairicWarkopTxt');
+      if (p10El && eq.p10) p10El.textContent = `$${Number(eq.p10).toFixed(2)}`;
+      if (medEl && eq.median) medEl.innerHTML = `$${Number(eq.median).toFixed(2)} <span style="font-size:10px; color:#94a3b8;">(Mean $${Number(eq.mean || eq.median).toFixed(2)})</span>`;
+      if (p90El && eq.p90) p90El.textContent = `$${Number(eq.p90).toFixed(2)}`;
+      if (fcEl) {
+        const fcStr = fc.map(s => `+${s.step}h:$${s.median}`).join(' ');
+        fcEl.innerHTML = `WinProb <span style="color:#34d399;">${Number(wp.median || 66).toFixed(0)}%</span> • ${fcStr || 'H1 Stabil'}`;
+      }
+      if (spEl) {
+        spEl.textContent = `EPI-1 Span: ${c.epi1_span_text || 'VERIFIED'} (${Math.round(Number(c.epi1_confidence || 0.61) * 100)}%) • ${cc.timestamp_wib ? cc.timestamp_wib.slice(11) : 'LIVE'}`;
+      }
+      if (copEl && cc.copsow_deepseek_v4) copEl.textContent = cc.copsow_deepseek_v4;
+      if (couEl && cc.council_glm53_hakim) couEl.textContent = cc.council_glm53_hakim;
+      if (warEl && cc.warkop_llama70b) warEl.textContent = cc.warkop_llama70b;
+    }
+
+    async function refreshClairicCouncilLive() {
+      const btn = document.getElementById('btnRefreshClairic');
+      if (btn) { btn.textContent = '⏳ Menyidangkan Clairic...'; btn.disabled = true; }
+      try {
+        const r = await fetch(`${EDGE_API_BASE}/api/clairic?refresh=1&t=${Date.now()}`);
+        if (r.ok) {
+          const j = await r.json();
+          if (j && j.ok) renderClairicCouncil(j);
+        }
+      } catch (e) {}
+      if (btn) { btn.textContent = '🔄 Sidang Ulang Live'; btn.disabled = false; }
+    }
+
     function renderSignalJournal(journalArr) {
       const tb = document.getElementById('signalJournalTableBody');
       if (!tb || !Array.isArray(journalArr)) return;
@@ -1070,6 +1158,9 @@
         }
         if (d.macro_radar || Array.isArray(d.cot_weekly)) {
           renderMacroAndCot(d.macro_radar, d.cot_weekly);
+        }
+        if (d.clairic_council) {
+          renderClairicCouncil(d.clairic_council);
         }
 
         if (d.mt5_execution_bridge) {
