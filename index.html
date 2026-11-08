@@ -144,6 +144,7 @@
       display: grid;
       grid-template-columns: 1.3fr 1fr;
       min-height: calc(100vh - 68px);
+      align-items: stretch;
     }
     .left-col {
       display: flex;
@@ -248,7 +249,9 @@
       display: flex;
       flex-direction: column;
       background: #0b111e;
-      max-height: calc(100vh - 68px);
+      align-self: stretch;
+      height: 0;
+      min-height: 100%;
     }
     .lounge-header {
       padding: 12px 14px;
@@ -257,6 +260,9 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 25;
     }
     .channel-tabs {
       display: flex;
@@ -286,7 +292,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      min-height: 320px;
+      min-height: 600px;
     }
     .msg-card {
       background: var(--bg-panel);
@@ -412,7 +418,7 @@
         min-height: auto;
       }
       .left-col { border-right: none; }
-      .right-col { max-height: none; }
+      .right-col { max-height: none; height: auto; min-height: 75vh; }
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       .gates-grid { grid-template-columns: 1fr; }
       .mobile-hidden { display: none !important; }
